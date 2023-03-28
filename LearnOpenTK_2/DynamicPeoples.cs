@@ -16,7 +16,7 @@ namespace LearnOpenTK_2
         public double a_const = 50;//константа для силы
         public double b_const = 0.08;//константа для силы
         public int k = 1200;//коэф упругости
-        public double r = 0.05;//радиус т-т, также задается в program
+        public double r = 0.03;//радиус т-т, также задается в program
 
         //public double f_ott = 0;//сила отталкивания людей друг от друга
         public double f_upr = 0;//сила упругости между людьми

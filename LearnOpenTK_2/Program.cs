@@ -12,7 +12,7 @@ namespace LearnOpenTK_2
 {
     class Program
     {
-        public double w = 1200;
+        public double w = 1400;
         public double h = 1000;
         public int countPeople = 20;
         
@@ -38,18 +38,37 @@ namespace LearnOpenTK_2
 
 
 
-        public double r = 0.05;
+        public double r = 0.03;
         //переменные для регулирования диапазона создания людей
-        public double minValue = -0.9+0.05*2;//+r надо
-        public double maxValue = 0.9-0.05*2;
+        public double minValue = -0.9+0.03*2;//+r надо
+        public double maxValue = 0.9-0.03*2;
         
 
         public void CreatePeople()//создаст людей и запихнет в массив
         {
             Random rnd = new Random();
-            for (int i = 0; i < countPeople; i++)
+            double[] abc = new double[2];
+            int counts = 0;
+
+            while (peoples.Count != countPeople)
             {
-                peoples.Add(new People((rnd.NextDouble()*(maxValue-minValue) + minValue)/scale, (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale));
+                double x = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
+                double y = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
+                counts = 0;
+
+                //смотрю, чтобы люди не появлялись друг в друге
+                for (int i = 0; i < peoples.Count; i++)
+                {
+                    if ((x > peoples[i].X + r/scale || x  < peoples[i].X - r/scale) && (y > peoples[i].Y + r/scale || y < peoples[i].Y - r/scale))
+                    {
+                        counts++;
+                    }
+                }
+
+                if (counts == peoples.Count)
+                {
+                    peoples.Add(new People(x, y));
+                }
             }
         }
 
