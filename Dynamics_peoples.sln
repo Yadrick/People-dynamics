@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33328.57
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamics_peoples", "LearnOpenTK_2\Dynamics_peoples.csproj", "{BA6CA267-97A9-4EF6-848D-D68A7FCED1E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA6CA267-97A9-4EF6-848D-D68A7FCED1E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA6CA267-97A9-4EF6-848D-D68A7FCED1E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA6CA267-97A9-4EF6-848D-D68A7FCED1E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA6CA267-97A9-4EF6-848D-D68A7FCED1E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54084A99-6D01-4C85-9A3A-1139EF9D3841}
+	EndGlobalSection
+EndGlobal
