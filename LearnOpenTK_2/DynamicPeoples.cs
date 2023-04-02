@@ -32,6 +32,8 @@ namespace LearnOpenTK_2
         //собственное пространство частицы
         public double square = 0;
 
+        public double scale = 0.5;// множитель масшттаба
+
         //точка для притягивания людишек - передается прямо в метод
        // private double xx = 1.8;
         //private double yy = 0;
@@ -53,7 +55,7 @@ namespace LearnOpenTK_2
                 square = 0;
                 f_upr = 0;
                 force_Lennard = 0;
-                rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[i].X + 2 * r),2) + Math.Pow(yy - list[i].Y, 2));
+                rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[i].X + r/scale),2) + Math.Pow(yy - list[i].Y, 2));
                 for (int j = i + 1; j < list.Count; j++)
                 {
 
@@ -61,7 +63,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - list[j].X) / (distance_peop);
                     pr_y = (list[i].Y - list[j].Y) / (distance_peop);
 
-                    s = 4*r / distance_peop;
+                    s = 2*(r/scale) / distance_peop;
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard =  12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a,2) ;//на вектор взаимодействия умножается ниже
 
@@ -87,6 +89,7 @@ namespace LearnOpenTK_2
                         list[j].Pressure -= list[i].Pressure;
                     }
 
+                    //когда i-го человека сравнили со всеми остальными j, запсукается расчет площади?
                     if (j == list.Count - 1)
                     {
                         square = Square(list2, list[i]);
@@ -100,21 +103,22 @@ namespace LearnOpenTK_2
                     }
                 }
                 //вектор силы в точку выхода
-                list[i].Fx += f_vector * (xx - (list[i].X+2*r)) / rasstoyanie;
+                list[i].Fx += f_vector * (xx - (list[i].X + r / scale)) / rasstoyanie;
                 list[i].Fy += f_vector * (yy - list[i].Y) / rasstoyanie;
             }
-            rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[list.Count - 1].X+2*r), 2) + Math.Pow(yy - list[list.Count - 1].Y, 2));
-            list[list.Count-1].Fx += f_vector * (xx - (list[list.Count - 1].X+2*r)) / rasstoyanie;
+
+            rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy - list[list.Count - 1].Y, 2));
+            list[list.Count-1].Fx += f_vector * (xx - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
             list[list.Count - 1].Fy += f_vector * (yy - list[list.Count - 1].Y) / rasstoyanie;
         }
 
-        public void Velocity(List<People> list, double xx1, double yy1)
+        public void Velocity(List<People> list, double coordY_exit ,double xx1, double yy1)
         {
-            var epsilon = 0.05;
+            var epsilon = 0.005;//маленькая величина для погрешности при выходе
             for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].Vy == 0 && list[i].Vx != 0) { continue; }//когда человек вышел, то он продолжает двигаться прямолинейно
-                if ((xx1 - (list[i].X + 2 * r)) < r+epsilon && Math.Abs(yy1 - list[i].Y) < r+epsilon)
+                if ((xx1 - (list[i].X +  r/scale)) <= r / scale + epsilon && (coordY_exit - Math.Abs(list[i].Y)) > r / scale + epsilon)//условие для прохода людей через проход?
                 {
                     list[i].Vx = 1;
                     list[i].Vy = 0;
@@ -146,6 +150,7 @@ namespace LearnOpenTK_2
         {
             nado1 = 0;
             nado2 = 0;
+            // цифра 5 - количество рисуемых стен в массиве класса Барьеров
             //проверка на касание стен
             for (int i = 0; i < 5; i++) 
             {
@@ -154,22 +159,25 @@ namespace LearnOpenTK_2
                     for (int j = 0; j < list.Count; j++)
                     {
 
-                        //если прошел через проход
+                        //если прошел через проход, то взаимодействия не нужны
                         if (list[j].Vy == 0 && list[j].Vx != 0)
                         {
                             continue;
                         }
 
-                        nado1 = Math.Sqrt(Math.Pow(barriers.coordPair[i][0] - (list[j].X + 2 * r), 2) + Math.Pow(barriers.coordPair[i][1] - (list[j].Y), 2));
-                        nado2 = Math.Sqrt(Math.Pow(barriers.coordPair[i][2] - (list[j].X + 2 * r), 2) + Math.Pow(barriers.coordPair[i][3] - (list[j].Y), 2));
-                        //правые стенки смотрю
-                        if ((list[j].X + 2 * r) +  2 * r >= barriers.coordPair[i][0] && (list[j].X + 2 * r) < barriers.coordPair[i][0] && (nado2 <= 2*r || nado1<=2*r))
+                        //nado1,2 - расстояние от крайних точек вертикальной стены до центра людей
+                        nado1 = Math.Sqrt(Math.Pow(barriers.coordPair[i][0] - (list[j].X +  r/scale), 2) + Math.Pow(barriers.coordPair[i][1] - (list[j].Y), 2));
+                        nado2 = Math.Sqrt(Math.Pow(barriers.coordPair[i][2] - (list[j].X +  r/scale), 2) + Math.Pow(barriers.coordPair[i][3] - (list[j].Y), 2));
+                        
+                        //рассматриваю правые стенки
+                        if ((list[j].X + r/scale) + r/scale >= barriers.coordPair[i][0] && (list[j].X + r/scale) < barriers.coordPair[i][0])//&& (nado2 <= r / scale || nado1 <= r / scale))
                         {
-                           if (Math.Abs(list[j].Y) + 2 * r <= Math.Abs(barriers.coordPair[i][1]) && Math.Abs(list[j].Y) + 2* r <= Math.Abs(barriers.coordPair[i][3]))
-                            {
-                                Console.WriteLine("a?");
-                                continue;
-                            }
+                            //не могу понять, для чего это условие я писал в прошлый раз
+                            //if (Math.Abs(list[j].Y) + r / scale <= Math.Abs(barriers.coordPair[i][1]) && Math.Abs(list[j].Y) + r / scale <= Math.Abs(barriers.coordPair[i][3]))
+                            //{
+                            //    Console.WriteLine("a?");
+                            //    continue;
+                            //}
                             list[j].Vx = (-list[j].Vx);
                         }
 

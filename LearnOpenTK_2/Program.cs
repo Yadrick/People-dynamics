@@ -44,7 +44,7 @@ namespace LearnOpenTK_2
         public double maxValue = 0.9-0.03*2;
         
 
-        public void CreatePeople()//создаст людей и запихнет в массив
+        public void CreatePeople()//создаст людей и запихнет в массив в квадрате  minValue:maxValue
         {
             Random rnd = new Random();
             double[] abc = new double[2];
@@ -75,11 +75,12 @@ namespace LearnOpenTK_2
         //создаю комнату
         public void CreateBarrier()
         {
-            double[] stena1 = { x_right / scale, yy+eps / scale, x_right / scale, y_top / scale };
+            //eps - половина расстояния прохода
+            double[] stena1 = { x_right / scale, (yy+eps) / scale, x_right / scale, y_top / scale };
             double[] stena2 = { x_right / scale, y_top / scale, x_left / scale, y_top / scale };
             double[] stena3 = { x_left / scale, y_top / scale, x_left / scale, y_bot / scale };
             double[] stena4 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
-            double[] stena5 = { x_right / scale, y_bot / scale, x_right / scale, yy-eps / scale };
+            double[] stena5 = { x_right / scale, y_bot / scale, x_right / scale, (yy-eps) / scale };
 
             barrier.coordPair.Add(stena1);
             barrier.coordPair.Add(stena2);
@@ -92,7 +93,7 @@ namespace LearnOpenTK_2
 
         static void Main(string[] args)
         {
-            Program prog1 = new Program();//только для размеров экрана
+            Program prog1 = new Program();//только для взятия размеров экрана программы
             
 
             var nativeWindowSettings = new NativeWindowSettings()//просто настройки окна OpenGL
@@ -152,7 +153,7 @@ namespace LearnOpenTK_2
             fps++;
 
             dynamics.Force(prog.peoples, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Velocity(prog.peoples, prog.x_right / prog.scale, prog.yy / prog.scale);
+            dynamics.Velocity(prog.peoples, (prog.yy + prog.eps) / prog.scale, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.ContactCheck(prog.peoples, prog.barrier, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples);
 
@@ -203,7 +204,7 @@ namespace LearnOpenTK_2
                 GL.Vertex2(prog.barrier.coordPair[i][2], prog.barrier.coordPair[i][3]);//вторая точка от линии
             }
             GL.End();
-            // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры
+            // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры - сделано что-то подобное через scale
         }
 
 
