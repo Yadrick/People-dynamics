@@ -14,11 +14,12 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 20;
+        public int countPeople = 10;
         
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
-        public Barrier barrier = new Barrier();
+        public Barrier room = new Barrier();//простая комната с одним выходом
+        public Barrier metro = new Barrier();//модель местности возле эскалатора на подъеме из метро "Политехническая"
 
 
         //размеры комнаты
@@ -34,17 +35,22 @@ namespace LearnOpenTK_2
         //public double xx = x_right
         public double yy = 0;
 
-        public double eps = 0.1;//для задания толщины выхода
+        public double eps = 0.1;//для задания толщины выхода в Room
 
 
 
-        public double r = 0.03;
-        //переменные для регулирования диапазона создания людей
-        public double minValue = -0.9+0.03*2;//+r надо
-        public double maxValue = 0.9-0.03*2;
-        
+        public double r = 0.05;
+        //переменные для регулирования диапазона создания людей в Room
+        public double minValue = -0.9+0.05*2;//+r надо
+        public double maxValue = 0.9-0.05*2;
 
-        public void CreatePeople()//создаст людей и запихнет в массив в квадрате  minValue:maxValue
+        //переменные для регулирования диапазона создания людей в Metro
+        public double minValueMetro = -0.9 + 0.05 * 2;//+r надо
+        public double maxValueMetro = 0 - 0.05 * 2;
+        public double maxValueMetroY = 0.9 - 0.05 * 2;
+
+
+        public void CreatePeopleRoom()//создаст людей и запихнет в массив в квадрате  minValue:maxValue
         {
             Random rnd = new Random();
             double[] abc = new double[2];
@@ -55,6 +61,7 @@ namespace LearnOpenTK_2
                 double x = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
                 double y = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
                 counts = 0;
+
 
                 //смотрю, чтобы люди не появлялись друг в друге
                 for (int i = 0; i < peoples.Count; i++)
@@ -72,21 +79,106 @@ namespace LearnOpenTK_2
             }
         }
 
+        public void CreatePeopleMetro()//создаст людей и запихнет в массив (спавнятся в квадрате  minValue:maxValue)
+        {
+            Random rnd = new Random();
+            double[] abc = new double[2];
+            int counts = 0;
+
+            
+            while (peoples.Count != countPeople)
+            {
+                double x = (rnd.NextDouble() * (maxValueMetro - minValueMetro) + minValueMetro) / scale;
+                double y = (rnd.NextDouble() * (maxValueMetroY - minValueMetro) + minValueMetro) / scale;
+                counts = 0;
+
+                //смотрю, чтобы люди не появлялись друг в друге
+                for (int i = 0; i < peoples.Count; i++)
+                {
+                    if ((x > peoples[i].X + r / scale || x < peoples[i].X - r / scale) && (y > peoples[i].Y + r / scale || y < peoples[i].Y - r / scale))
+                    {
+                        counts++;
+                    }
+                }
+
+                if (counts == peoples.Count)
+                {
+                    peoples.Add(new People(x, y));
+                }
+            }
+
+        }
+
         //создаю комнату
-        public void CreateBarrier()
+        public void CreateRoom()
         {
             //eps - половина расстояния прохода
-            double[] stena1 = { x_right / scale, (yy+eps) / scale, x_right / scale, y_top / scale };
+            double[] stena1 = { x_right / scale, (yy + eps) / scale, x_right / scale, y_top / scale };
             double[] stena2 = { x_right / scale, y_top / scale, x_left / scale, y_top / scale };
             double[] stena3 = { x_left / scale, y_top / scale, x_left / scale, y_bot / scale };
             double[] stena4 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
-            double[] stena5 = { x_right / scale, y_bot / scale, x_right / scale, (yy-eps) / scale };
+            double[] stena5 = { x_right / scale, y_bot / scale, x_right / scale, (yy - eps) / scale };
 
-            barrier.coordPair.Add(stena1);
-            barrier.coordPair.Add(stena2);
-            barrier.coordPair.Add(stena3);
-            barrier.coordPair.Add(stena4);
-            barrier.coordPair.Add(stena5);
+            room.coordPair.Add(stena1);
+            room.coordPair.Add(stena2);
+            room.coordPair.Add(stena3);
+            room.coordPair.Add(stena4);
+            room.coordPair.Add(stena5);
+        }
+
+        public void CreateMetro()
+        {
+            //нужно изменить переменные для регулирования диапазона создания людей
+
+
+            //eps - половина расстояния прохода
+            //размеры комнаты
+            double x_right = 0;
+            double x_left = -0.9;
+            double y_top = 17.3 * r;
+            double y_bot = -17.3 * r;
+
+            double[] stena1 = { x_right / scale, y_top / scale, x_left / scale, y_top / scale };
+            double[] stena2 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
+
+            double[] stena3 = { x_right / scale, y_top / scale, x_right / scale, (y_top - 8 * (r)) / scale };
+            double[] stena4 = { x_right / scale, y_bot / scale, x_right / scale, (y_bot + 8 * (r)) / scale };
+
+            double[] stena5 = { x_right / scale, (y_top - 8 * (r)) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r)) / scale};
+            double[] stena6 = { x_right / scale, (y_bot + 8 * (r)) / scale, (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
+
+            //эскалаторы
+            double[] stena7 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r)) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r)) / scale };
+            double[] stena9 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale };
+            double[] stena11 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
+            double[] stena12 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
+            double[] stena10 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale };
+            double[] stena8 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
+            Console.WriteLine();
+            //перегородки между эскалаторами
+            double[] stena13 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
+            double[] stena14 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
+
+            metro.coordPair.Add(stena1);
+            metro.coordPair.Add(stena2);
+            metro.coordPair.Add(stena3);
+            metro.coordPair.Add(stena4);
+            metro.coordPair.Add(stena5);
+            metro.coordPair.Add(stena6);
+
+            //нижние для эскалаторов
+            metro.coordPair.Add(stena7);
+            metro.coordPair.Add(stena8);
+
+            metro.coordPair.Add(stena11);
+            metro.coordPair.Add(stena12);
+
+            metro.coordPair.Add(stena9);
+            metro.coordPair.Add(stena10);
+
+            //перегородки между эскалатоорами
+            metro.coordPair.Add(stena13);
+            metro.coordPair.Add(stena14);
         }
 
        
@@ -130,9 +222,11 @@ namespace LearnOpenTK_2
         //инициализация ресурсов
         protected override void OnLoad()
         {
-            prog.CreatePeople();
-            prog.CreateBarrier();
-            //dynamics.Displacement(prog.peoples);
+            //prog.CreatePeopleRoom();
+            prog.CreatePeopleMetro();
+            prog.CreateMetro();
+            //prog.CreateRoom();
+            dynamics.Displacement(prog.peoples);
 
 
             GL.Scale(prog.scale,prog.scale,1);//увеличиваю раззмер поля
@@ -154,12 +248,13 @@ namespace LearnOpenTK_2
 
             dynamics.Force(prog.peoples, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Velocity(prog.peoples, (prog.yy + prog.eps) / prog.scale, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.ContactCheck(prog.peoples, prog.barrier, prog.x_right / prog.scale, prog.yy / prog.scale);
+            //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
+            dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples);
 
             if (frameTime >= 1)//чтобк каждую секунду выводить коилчество кадров
             {
-                Title = $"Бог Ярослав, но FPS = {fps}";
+                Title = $"FPS = {fps}";
                 frameTime = 0;
                 fps = 0;
 
@@ -174,11 +269,10 @@ namespace LearnOpenTK_2
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);//очистка формы ДАННЫМ выше(в OnLoad) цветом 
 
-            DrawPoint(prog.peoples);
-            
-            //Console.WriteLine(prog.peoples[0].Vx);
+            DrawPoint(prog.peoples);//рисуются чуваки 
 
-            DrawRoom();
+            //DrawRoom();
+            DrawMetro();
 
             SwapBuffers();// в одном буфере рисует, другой показывает. Когда заканчивает рисовать, то меняет местами
             base.OnRenderFrame(args);
@@ -198,10 +292,29 @@ namespace LearnOpenTK_2
             GL.Color3(0.0, 0.0, 0.0);
 
             GL.Begin(PrimitiveType.LineStrip);
-            for (int i = 0; i < prog.barrier.coordPair.Count; i++)
+            for (int i = 0; i < prog.room.coordPair.Count; i++)
             {
-                GL.Vertex2(prog.barrier.coordPair[i][0], prog.barrier.coordPair[i][1]);//первая точка от линии
-                GL.Vertex2(prog.barrier.coordPair[i][2], prog.barrier.coordPair[i][3]);//вторая точка от линии
+                GL.Vertex2(prog.room.coordPair[i][0], prog.room.coordPair[i][1]);//первая точка от линии
+                GL.Vertex2(prog.room.coordPair[i][2], prog.room.coordPair[i][3]);//вторая точка от линии
+            }
+            GL.End();
+            // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры - сделано что-то подобное через scale
+        }
+
+        private void DrawMetro()
+        {
+            GL.LineWidth(5.0f);
+            
+            GL.Begin(PrimitiveType.Lines);
+            for (int i = 0; i < prog.metro.coordPair.Count; i++)
+            {
+                GL.Color3(0.0, 0.0, 0.0);
+                if (prog.metro.coordPair[i][0] >= 7 * 2 * prog.r / prog.scale && (prog.metro.coordPair[i][1] == prog.metro.coordPair[i][3]))
+                {
+                    GL.Color3(1.0, 1.0, 1.0);
+                }
+                GL.Vertex2(prog.metro.coordPair[i][0], prog.metro.coordPair[i][1]);//первая точка от линии
+                GL.Vertex2(prog.metro.coordPair[i][2], prog.metro.coordPair[i][3]);//вторая точка от линии
             }
             GL.End();
             // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры - сделано что-то подобное через scale

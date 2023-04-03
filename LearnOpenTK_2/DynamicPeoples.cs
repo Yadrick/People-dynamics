@@ -16,7 +16,7 @@ namespace LearnOpenTK_2
         public double a_const = 50;//константа для силы
         public double b_const = 0.08;//константа для силы
         public int k = 1200;//коэф упругости
-        public double r = 0.03;//радиус т-т, также задается в program
+        public double r = 0.05;//радиус т-т, также задается в program
 
         //public double f_ott = 0;//сила отталкивания людей друг от друга
         public double f_upr = 0;//сила упругости между людьми
@@ -152,7 +152,7 @@ namespace LearnOpenTK_2
             nado2 = 0;
             // цифра 5 - количество рисуемых стен в массиве класса Барьеров
             //проверка на касание стен
-            for (int i = 0; i < 5; i++) 
+            for (int i = 0; i < barriers.coordPair.Count; i++) 
             {
                 if (barriers.coordPair[i][2] == barriers.coordPair[i][0])//вертикальные стены
                 {
@@ -206,6 +206,52 @@ namespace LearnOpenTK_2
                 //        }
                 //    }
                 //}
+            }
+        }
+
+        public void ContactCheckMetro(List<People> list, Barrier barriers, double xx, double yy)
+        {
+            nado1 = 0;
+            nado2 = 0;
+
+            //проверка на касание стен
+            for (int i = 0; i < barriers.coordPair.Count; i++)
+            {
+                if ((barriers.coordPair[i][0] == barriers.coordPair[i][2]))//вертикальные стены
+                {
+                    for (int j = 0; j < list.Count; j++)
+                    {
+                        //если прошел через проход, то взаимодействия не нужны
+                        if (list[j].Vy == 0 && list[j].Vx != 0)
+                        {
+                            continue;
+                        }
+
+                        //nado1,2 - расстояние от крайних точек вертикальной стены до центра людей (НЕ ПОМНЮ НАХ НАДО)
+                        nado1 = Math.Sqrt(Math.Pow(barriers.coordPair[i][0] - (list[j].X + r / scale), 2) + Math.Pow(barriers.coordPair[i][1] - (list[j].Y), 2));
+                        nado2 = Math.Sqrt(Math.Pow(barriers.coordPair[i][2] - (list[j].X + r / scale), 2) + Math.Pow(barriers.coordPair[i][3] - (list[j].Y), 2));
+
+                        //рассматриваю стенки, которые расположены ниже 0 по оси OY
+                        if ((barriers.coordPair[i][1] < 0 && list[j].Y <= 0) && (list[j].X + r / scale) + r / scale >= barriers.coordPair[i][0] && (list[j].X + r / scale) < barriers.coordPair[i][0] && ((((list[j].Y - 0.5 * r / scale))< (barriers.coordPair[i][1]) && ((list[j].Y - 0.5 * r / scale)) > (barriers.coordPair[i][3])) || (((list[j].Y - 0.5 * r / scale)) > (barriers.coordPair[i][1]) && ((list[j].Y - 0.5*r/scale)) < (barriers.coordPair[i][3]))))
+                        {
+                            if (Math.Abs(list[j].Y) + r / scale <= Math.Abs(barriers.coordPair[i][1]) && Math.Abs(list[j].Y) + r / scale <= Math.Abs(barriers.coordPair[i][3]))
+                            {
+                                Console.WriteLine("зашел");
+                                continue;
+                            }
+                            list[j].Vx = -list[j].Vx;
+                            continue;
+                        }
+                        //рассматриваю стенки, которые расположены выше 0 по оси OY
+                        if ((barriers.coordPair[i][1] > 0 && list[j].Y > 0) && (list[j].X + r / scale) + r / scale >= barriers.coordPair[i][0] && (list[j].X + r / scale) < barriers.coordPair[i][0] && (((Math.Abs(list[j].Y)) + 0.5 * r / scale < Math.Abs(barriers.coordPair[i][1]) && (Math.Abs(list[j].Y)+ 0.5 * r / scale) + 0.5 * r / scale > Math.Abs(barriers.coordPair[i][3])) || ((Math.Abs(list[j].Y)) + 0.5 * r / scale > Math.Abs(barriers.coordPair[i][1]) && (Math.Abs(list[j].Y)) + 0.5 * r / scale < Math.Abs(barriers.coordPair[i][3]))))//&& (nado2 <= r / scale || nado1 <= r / scale))
+                        {
+                            list[j].Vx = -list[j].Vx;
+                        }
+
+
+                    }
+                }
+
             }
         }
 
