@@ -12,6 +12,7 @@ namespace LearnOpenTK_2
         public double X_old { get; set; }
         public double Y_old { get; set; }
         public double Pressure { get; set; }
+        public bool Position { get; set; }//отвечает, дошел ли человек до изначальной точки, куда я его направил
 
         public People()
         {
@@ -22,6 +23,7 @@ namespace LearnOpenTK_2
             Fx = 0;
             Fy = 0;
             Pressure = 0;
+            Position = false;
         }
 
         public People(double x, double y)
@@ -35,6 +37,7 @@ namespace LearnOpenTK_2
             Fx = 0;
             Fy = 0;
             Pressure = 0;
+            Position = false;
         }
 
         public People(double x, double y, double vx, double vy)
@@ -48,6 +51,7 @@ namespace LearnOpenTK_2
             Fx = 0;
             Fy = 0;
             Pressure = 0;
+            Position = false;
         }
 
     }

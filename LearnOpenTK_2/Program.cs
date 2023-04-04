@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 10;
+        public int countPeople = 11;
         
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -31,13 +31,22 @@ namespace LearnOpenTK_2
         //параметр, на который делятся размеры комнаты для увеличения диапазона
         public double scale = 0.5;
 
-        //координаты центра выхода
+        //координаты центра выхода в комнате
         //public double xx = x_right
         public double yy = 0;
 
-        public double eps = 0.1;//для задания толщины выхода в Room
+        //координаты движения точек для выхода из метро
+        public double xxMetro = 0;
+        public double yyMetro = (17.3 * 0.05 - 8 * (0.05) - 2.85 * 2 * 0.05);//(y_top(metro) * r - 8 * (r) - 2.85 * 2 * r); - общая формула
+        //далее коорды 2-х выходов из метро
+        public double xx1Metro = 0 + 7 * 2 * 0.05; // x_right(metro) + 7 * 2 * r
+        public double xx2Metro = 0 + 7 * 2 * 0.05;// x_right(metro) + 7 * 2 * r
+        public double yy1Metro = 17.3*0.05 - 8 * (0.05) - 1.05 * 2 * 0.05; // (y_top - 8 * (r) - 1.05 * 2 * r)
+        public double yy2Metro = 17.3*0.05 - 8 * (0.05) - 4.65 * 2 * 0.05; // (y_top - 8 * (r) - 4.65 * 2 * r)
 
+        public double eps = 0.1;//половина высоты прохода? в room
 
+        public string flag = "metro";//моделируется метро или нет
 
         public double r = 0.05;
         //переменные для регулирования диапазона создания людей в Room
@@ -246,8 +255,8 @@ namespace LearnOpenTK_2
             frameTime += args.Time;
             fps++;
 
-            dynamics.Force(prog.peoples, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Velocity(prog.peoples, (prog.yy + prog.eps) / prog.scale, prog.x_right / prog.scale, prog.yy / prog.scale);
+            dynamics.Force(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
+            dynamics.Velocity(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (2*prog.r) / prog.scale);
             //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples);
