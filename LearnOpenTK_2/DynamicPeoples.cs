@@ -40,7 +40,7 @@ namespace LearnOpenTK_2
 
         public void Force(string flag, List<People> list, double xx, double yy, double xx1, double yy1, double xx2, double yy2)
         {
-            //если flag = metro, то ппоследние 4 параметра используются
+            //если flag = metro, то ппоследние 4 параметра используются, а если нет, то они вроде не используются))
 
 
             for (int i = 0; i < list.Count; i++)
@@ -341,26 +341,26 @@ namespace LearnOpenTK_2
 
                     }
                 }
-                else//горизонтальные стены
-                {
-                    //ПОКА НЕ МОГУ ПРОВЕРИТЬ РАБОТАЕТ ЛИ КОРРЕКТНО. + НЕ ДОПИСАЛ СЛУЧАЙ ДЛЯ Y<0
-                    for (int j = 0; j < list.Count; j++)
-                    {
-                        //если координата человека > начала горизонтальной линии
-                        if (barriers.coordPair[i][0] >= list[j].X)
-                        {
-                            //рассматриваю стенки (и людей), которые расположены выше 0 по оси OY
-                            if ((barriers.coordPair[i][1] > 0 && list[j].Y > 0))
-                            {
-                                if (list[j].Y + r / scale >= barriers.coordPair[i][1] && list[j].Y < barriers.coordPair[i][1] && (list[j].X+r/scale) >= barriers.coordPair[i][0])
-                                {
-                                    Console.WriteLine("есть контакт");
-                                    list[j].Vy = -list[j].Vy;
-                                }
-                            }
-                        }
-                    }
-                }
+                //else//горизонтальные стены
+                //{
+                //    //ПОКА НЕ МОГУ ПРОВЕРИТЬ РАБОТАЕТ ЛИ КОРРЕКТНО. + НЕ ДОПИСАЛ СЛУЧАЙ ДЛЯ Y<0
+                //    for (int j = 0; j < list.Count; j++)
+                //    {
+                //        //если координата человека > начала горизонтальной линии
+                //        if (barriers.coordPair[i][0] >= list[j].X)
+                //        {
+                //            //рассматриваю стенки (и людей), которые расположены выше 0 по оси OY
+                //            if ((barriers.coordPair[i][1] > 0 && list[j].Y > 0))
+                //            {
+                //                if (list[j].Y + r / scale >= barriers.coordPair[i][1] && list[j].Y < barriers.coordPair[i][1] && (list[j].X+r/scale) >= barriers.coordPair[i][0])
+                //                {
+                //                    Console.WriteLine("есть контакт");
+                //                    list[j].Vy = -list[j].Vy;
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
 
             }
         }

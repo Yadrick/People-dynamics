@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 11;
+        public int countPeople = 50;
         
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -88,6 +88,8 @@ namespace LearnOpenTK_2
             }
         }
 
+
+
         public void CreatePeopleMetro()//создаст людей и запихнет в массив (спавнятся в квадрате  minValue:maxValue)
         {
             Random rnd = new Random();
@@ -114,6 +116,51 @@ namespace LearnOpenTK_2
                 {
                     peoples.Add(new People(x, y));
                 }
+            }
+
+        }
+
+        public void CreatePeopleMetroStatic()//создаст людей и запихнет в массив (спавнятся в квадрате  minValue:maxValue)
+        {
+            Random rnd = new Random();
+            int halfCountPeople = countPeople / 2;
+            int secondHalfCountPeople = countPeople - halfCountPeople;
+            int[] massiv = new int[10]; // допустим, всего 10 выходов будет возможными. в rnd.next(a,b) определяется количество выходов
+
+            int a = 0;//для рандома
+
+            for (int i = 0; i < halfCountPeople; i++)
+            {
+                // a - условно отвечает за номер двери при выходе из выгона
+                a = rnd.Next(0, 2);
+                //+ r*rnd.Next(0,2) - смещение на r вправо
+                double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
+
+                massiv[a]++;
+
+                double y = -(9 + (massiv[a] - 1)) * 2 * r / scale;
+
+
+                peoples.Add(new People(x, y));
+            }
+
+            for (int i = 0; i < massiv.Length; i++)
+            {
+                massiv[i] = 0;
+            }
+
+            for (int i = 0; i < secondHalfCountPeople; i++)
+            {
+                a = rnd.Next(0, 2);
+                //+ r*rnd.Next(0,2) - смещение на r вправо
+                double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
+
+                massiv[a]++;
+
+
+                double y = (9 + (massiv[a] - 1)) * 2 * r / scale;
+
+                peoples.Add(new People(x, y));
             }
 
         }
@@ -232,7 +279,8 @@ namespace LearnOpenTK_2
         protected override void OnLoad()
         {
             //prog.CreatePeopleRoom();
-            prog.CreatePeopleMetro();
+            //prog.CreatePeopleMetro();
+            prog.CreatePeopleMetroStatic();
             prog.CreateMetro();
             //prog.CreateRoom();
             dynamics.Displacement(prog.peoples);
