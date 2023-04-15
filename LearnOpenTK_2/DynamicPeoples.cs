@@ -177,19 +177,19 @@ namespace LearnOpenTK_2
 
         public void Velocity(string flag, List<People> list, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
         {
-            var epsilon = 0.005;//маленькая величина для погрешности при выходе
+            //var epsilon = 0.005;//маленькая величина для погрешности при выходе
 
             if (flag == "metro")
             {
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].Vy == 0 && list[i].Vx != 0) { continue; }//когда человек вышел, то он продолжает двигаться прямолинейно
-                    if ((xx1 - (list[i].X + r / scale)) <= r / scale + epsilon && (list[i].Y) < yy1 + h && (list[i].Y) > yy1 - h)//условие для прохода людей через проход?
+                    if ((xx1 - (list[i].X + r / scale)) <= r / scale && (list[i].Y) < yy1 + h && (list[i].Y) > yy1 - h)//условие для прохода людей через проход?
                     {
                         list[i].Vx = 0.5;
                         list[i].Vy = 0;
                     }
-                    else if((xx2 - (list[i].X + r / scale)) <= r / scale + epsilon && (list[i].Y) < yy2 + h && (list[i].Y) > yy2 - h)//условие для прохода людей через проход?
+                    else if((xx2 - (list[i].X + r / scale)) <= r / scale  && (list[i].Y) < yy2 + h && (list[i].Y) > yy2 - h)//условие для прохода людей через проход?
                     {
                         list[i].Vx = 0.5;
                         list[i].Vy = 0;
@@ -206,7 +206,7 @@ namespace LearnOpenTK_2
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].Vy == 0 && list[i].Vx != 0) { continue; }//когда человек вышел, то он продолжает двигаться прямолинейно
-                    if ((xx - (list[i].X + r / scale)) <= r / scale + epsilon && (list[i].Y) < yy + h && (list[i].Y) > yy - h)//условие для прохода людей через проход?
+                    if ((xx - (list[i].X + r / scale)) <= r / scale && (list[i].Y) < yy + h && (list[i].Y) > yy - h)//условие для прохода людей через проход?
                     {
                         list[i].Vx = 1;
                         list[i].Vy = 0;
@@ -352,7 +352,7 @@ namespace LearnOpenTK_2
                 //            //рассматриваю стенки (и людей), которые расположены выше 0 по оси OY
                 //            if ((barriers.coordPair[i][1] > 0 && list[j].Y > 0))
                 //            {
-                //                if (list[j].Y + r / scale >= barriers.coordPair[i][1] && list[j].Y < barriers.coordPair[i][1] && (list[j].X+r/scale) >= barriers.coordPair[i][0])
+                //                if (list[j].Y + r / scale >= barriers.coordPair[i][1] && list[j].Y < barriers.coordPair[i][1] && (list[j].X + r / scale) >= barriers.coordPair[i][0])
                 //                {
                 //                    Console.WriteLine("есть контакт");
                 //                    list[j].Vy = -list[j].Vy;

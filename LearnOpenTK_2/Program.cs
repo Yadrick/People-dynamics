@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 50;
+        public int countPeople = 60;
         
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -129,10 +129,11 @@ namespace LearnOpenTK_2
 
             int a = 0;//для рандома
 
+            //добавляю людей, вышедших из поезда снизу
             for (int i = 0; i < halfCountPeople; i++)
             {
                 // a - условно отвечает за номер двери при выходе из выгона
-                a = rnd.Next(0, 2);
+                a = rnd.Next(0, 4);
                 //+ r*rnd.Next(0,2) - смещение на r вправо
                 double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
 
@@ -144,6 +145,7 @@ namespace LearnOpenTK_2
                 peoples.Add(new People(x, y));
             }
 
+            //обнуляю массив, чтобы добавить людей, вышедших из поезда сверзу
             for (int i = 0; i < massiv.Length; i++)
             {
                 massiv[i] = 0;
@@ -151,8 +153,8 @@ namespace LearnOpenTK_2
 
             for (int i = 0; i < secondHalfCountPeople; i++)
             {
-                a = rnd.Next(0, 2);
-                //+ r*rnd.Next(0,2) - смещение на r вправо
+                a = rnd.Next(0, 4);
+                //+ Math.Pow(-1, rnd.Next(1, 2))*r*rnd.Next(0,2) - смещение на r вправо-влево
                 double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
 
                 massiv[a]++;
@@ -163,6 +165,14 @@ namespace LearnOpenTK_2
                 peoples.Add(new People(x, y));
             }
 
+        }
+
+
+        //будет создавать людей, входящих внутрь метро
+        public void LoadingPeopleInsideMetro()
+        {
+            // буду спавнить каждый тик по одному или сразу пак людей?
+            // пока что хочу сразу пак
         }
 
         //создаю комнату
@@ -283,7 +293,7 @@ namespace LearnOpenTK_2
             prog.CreatePeopleMetroStatic();
             prog.CreateMetro();
             //prog.CreateRoom();
-            dynamics.Displacement(prog.peoples);
+            //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить
 
 
             GL.Scale(prog.scale,prog.scale,1);//увеличиваю раззмер поля
@@ -304,7 +314,7 @@ namespace LearnOpenTK_2
             fps++;
 
             dynamics.Force(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
-            dynamics.Velocity(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (2*prog.r) / prog.scale);
+            dynamics.Velocity(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples);
