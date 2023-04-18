@@ -14,10 +14,12 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 60;
-        
+        public int countPeople = 40;
+        public int countPeopleInput = 10;
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
+        public List<People> peoplesInput = new List<People>();//будет содержать всех заходящих людей 
+
         public Barrier room = new Barrier();//простая комната с одним выходом
         public Barrier metro = new Barrier();//модель местности возле эскалатора на подъеме из метро "Политехническая"
 
@@ -169,10 +171,23 @@ namespace LearnOpenTK_2
 
 
         //будет создавать людей, входящих внутрь метро
-        public void LoadingPeopleInsideMetro()
+        public void LoadingPeopleInsideMetro(double vx)
         {
             // буду спавнить каждый тик по одному или сразу пак людей?
             // пока что хочу сразу пак
+
+            double x = 0;
+            double y = (-17.3 * r + 8 * (r) + 2.1 * 2 * r - 2*r) / scale; // -0.41
+
+            for (int i = 0; i < countPeopleInput; i++)
+            {
+                // (9 * 2 * r) - конец видимого эскалатора
+                x =   (20 * 2 * r) + (i) * 2 * (2 * r) /scale;
+
+                peoplesInput.Add(new People(x, y, vx, 0));
+            }
+             
+
         }
 
         //создаю комнату
@@ -224,6 +239,7 @@ namespace LearnOpenTK_2
             //перегородки между эскалаторами
             double[] stena13 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
             double[] stena14 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
+
 
             metro.coordPair.Add(stena1);
             metro.coordPair.Add(stena2);
@@ -291,6 +307,7 @@ namespace LearnOpenTK_2
             //prog.CreatePeopleRoom();
             //prog.CreatePeopleMetro();
             prog.CreatePeopleMetroStatic();
+            prog.LoadingPeopleInsideMetro(-0.5);
             prog.CreateMetro();
             //prog.CreateRoom();
             //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить
@@ -313,11 +330,14 @@ namespace LearnOpenTK_2
             frameTime += args.Time;
             fps++;
 
-            dynamics.Force(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
-            dynamics.Velocity(prog.flag, prog.peoples, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
+            dynamics.Force(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
+            dynamics.Velocity(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples);
+
+            //для входящего потока
+            dynamics.Displacement(prog.peoplesInput);
 
             if (frameTime >= 1)//чтобк каждую секунду выводить коилчество кадров
             {
@@ -337,6 +357,7 @@ namespace LearnOpenTK_2
             GL.Clear(ClearBufferMask.ColorBufferBit);//очистка формы ДАННЫМ выше(в OnLoad) цветом 
 
             DrawPoint(prog.peoples);//рисуются чуваки 
+            DrawPoint(prog.peoplesInput);//рисуются чуваки входящие
 
             //DrawRoom();
             DrawMetro();

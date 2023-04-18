@@ -7,6 +7,14 @@ namespace LearnOpenTK_2
     {
         public double dt = 0.01;
         public double rasstoyanie = 10;
+
+
+        public double rasstoyanie2 = 10;//просто расстояние, потом пересчитывается
+        public double x_nado = 0;
+        public double y_nado = 0;
+        public double[] massiv = new double[50];// 50 - число людей, который заходят вметро (на самом деле можно меньше)
+
+
         public double m = 10;//средняя масса людей будет такой))
 
         public double pr_x = 0;//для проекции на х
@@ -38,7 +46,7 @@ namespace LearnOpenTK_2
        // private double xx = 1.8;
         //private double yy = 0;
 
-        public void Force(string flag, List<People> list, double xx, double yy, double xx1, double yy1, double xx2, double yy2)
+        public void Force(string flag, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2)
         {
             //если flag = metro, то ппоследние 4 параметра используются, а если нет, то они вроде не используются))
 
@@ -50,7 +58,53 @@ namespace LearnOpenTK_2
                 list[i].Pressure = 0;
             }
 
+            for (int i = 0; i < listInput.Count; i++)
+            {
+                listInput[i].Fx = 0;
+                listInput[i].Fy = 0;
+                listInput[i].Pressure = 0;
+            }
+
             double s = 0;
+
+            //взаимодействие i-го входящего чела с остальными ВХОДЯЩИМИ челами
+            for (int i = 0; i < listInput.Count-1; i++)
+            {
+                List<People> list2 = new List<People>();//нужно для рассчитывания площади локальной
+
+                square = 0;
+                f_upr = 0;
+                force_Lennard = 0;
+                rasstoyanie = Math.Sqrt(Math.Pow(xx - (listInput[i].X + r / scale), 2) + Math.Pow(yy - listInput[i].Y, 2));
+
+                for (int j = i+1; j < listInput.Count; j++)
+                {
+                    distance_peop = Math.Sqrt(Math.Pow((listInput[j].X - listInput[i].X), 2) + Math.Pow((listInput[j].Y - listInput[i].Y), 2));
+                    pr_x = (listInput[i].X - listInput[j].X) / (distance_peop);
+                    pr_y = (listInput[i].Y - listInput[j].Y) / (distance_peop);
+
+                    s = 2 * (r / scale) / distance_peop;
+                    potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
+                    force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
+
+                    if (potential_Lennard >= 0)
+                    {
+                        listInput[i].Fx += (force_Lennard) * pr_x;
+                        listInput[i].Fy += (force_Lennard) * pr_y;
+                        listInput[j].Fx -= (force_Lennard) * pr_x;
+                        listInput[j].Fy -= (force_Lennard) * pr_y;
+
+                        list2.Add(list[j]);
+
+                        square = 1;
+
+                        listInput[i].Pressure += (-distance_peop) * Math.Sqrt(Math.Pow(listInput[i].Fx, 2) + Math.Pow(listInput[i].Fy, 2)) / (4 * square);
+                        listInput[j].Pressure -= listInput[i].Pressure;
+                    }
+                }
+            }
+
+            // считаю силы взаимодействия между i-тым челом и всеми остальными
             for (int i = 0; i < list.Count - 1; i++)
             {
                 List<People> list2 = new List<People>();//нужно для рассчитывания площади локальной
@@ -59,6 +113,7 @@ namespace LearnOpenTK_2
                 f_upr = 0;
                 force_Lennard = 0;
                 rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[i].X + r/scale),2) + Math.Pow(yy - list[i].Y, 2));
+
                 for (int j = i + 1; j < list.Count; j++)
                 {
 
@@ -92,7 +147,7 @@ namespace LearnOpenTK_2
                         list[j].Pressure -= list[i].Pressure;
                     }
 
-                    //когда i-го человека сравнили со всеми остальными j, запсукается расчет площади?
+                    //когда i-го человека сравнили со всеми остальными j-ми, запсукается расчет площади?
                     if (j == list.Count - 1)
                     {
                         square = Square(list2, list[i]);
@@ -105,7 +160,35 @@ namespace LearnOpenTK_2
                         //list[j].Pressure = list[i].Pressure;
                     }
                 }
-                //вектор силы в точку выхода
+
+                //смотрю контакт i-го чела со входящими людьми
+                for (int j = 0; j < listInput.Count; j++)
+                {
+                    distance_peop = Math.Sqrt(Math.Pow((listInput[j].X - list[i].X), 2) + Math.Pow((listInput[j].Y - list[i].Y), 2));
+                    pr_x = (list[i].X - listInput[j].X) / (distance_peop);
+                    pr_y = (list[i].Y - listInput[j].Y) / (distance_peop);
+
+                    s = 2 * (r / scale) / distance_peop;
+                    potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
+                    force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
+
+                    if (potential_Lennard >= 0)
+                    {
+                        list[i].Fx += (force_Lennard) * pr_x;
+                        list[i].Fy += (force_Lennard) * pr_y;
+                        listInput[j].Fx -= (force_Lennard) * pr_x;
+                        listInput[j].Fy -= (force_Lennard) * pr_y;
+
+                        square = 1;
+
+                        list[i].Pressure += (-distance_peop) * Math.Sqrt(Math.Pow(list[i].Fx, 2) + Math.Pow(list[i].Fy, 2)) / (4 * square);
+                        listInput[j].Pressure -= list[i].Pressure;
+                    }
+
+                }
+
+
+                //задается вектор силы в точку выхода i-му челу
                 if (flag == "metro")
                 {
                     //спецаильная првоерка для последнего человека
@@ -120,7 +203,7 @@ namespace LearnOpenTK_2
                     }
                     else if (list[i].Position)
                     {
-                        if (list[i].Y > (yy1+yy2)/2)
+                        if (list[i].Y > (yy1 + yy2) /2 )
                         {
                             rasstoyanie = Math.Sqrt(Math.Pow(xx1 - (list[i].X + r / scale), 2) + Math.Pow(yy1 - list[i].Y, 2));
                             //идет в точку xx1,yy1
@@ -148,7 +231,47 @@ namespace LearnOpenTK_2
                     list[i].Fy += f_vector * (yy - list[i].Y) / rasstoyanie;
                 }
             }
-            //указания для последнего человечка
+
+           
+
+            //буду здесь добавлять входящим людям силу притяжения в точку
+            for (int i = 0; i < listInput.Count; i++)
+            {
+                Random rnd = new Random();
+                if (listInput[i].X <= xx1)
+                {
+                    //если прошшел эскалатор X <= xx1, а потом если ещё не прошел координату X >= xx + r/scale
+                    if (listInput[i].X >= xx + r/scale)
+                    {
+                        rasstoyanie2 = Math.Sqrt(Math.Pow(xx - (listInput[i].X + r / scale), 2) + Math.Pow(-yy - listInput[i].Y, 2));
+
+                        listInput[i].Fx += f_vector * (xx - (listInput[i].X + r / scale)) / rasstoyanie2;
+                        listInput[i].Fy += f_vector * (-yy - listInput[i].Y) / rasstoyanie2;
+                        continue;
+                    }
+                    else
+                    {
+                        // пусть движутся в x = -0.9/scale - 8 * r / scale, а y = +-11.5*r/scale
+                        x_nado = -0.9 / scale - 8 * r / scale;
+                        y_nado = Math.Pow(-1, rnd.Next(1, 3)) * 11.5 * r / scale;
+
+                        //massiv - впервый раз буду записывать сюда данные о точке притяжения вошедших людей - их две
+                        if (massiv[i] == 0)
+                        {
+                            massiv[i] = y_nado;
+                        }
+                        rasstoyanie2 = Math.Sqrt(Math.Pow(x_nado - (listInput[i].X + r / scale), 2) + Math.Pow(massiv[i] - listInput[i].Y, 2));
+
+                        listInput[i].Fx += f_vector * (x_nado - (listInput[i].X + r / scale)) / rasstoyanie2;
+                        listInput[i].Fy += f_vector * (massiv[i] - listInput[i].Y) / rasstoyanie2;
+                        continue;
+                    }
+                }
+                
+            }
+
+
+            //указания для последнего человечка выходящего из метро
             if (!list[list.Count - 1].Position)
             {
                 rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy - list[list.Count - 1].Y, 2));
@@ -172,15 +295,16 @@ namespace LearnOpenTK_2
                     list[list.Count - 1].Fy += f_vector * (yy2 - list[list.Count - 1].Y) / rasstoyanie;
                 }
             }
-                
+
         }
 
-        public void Velocity(string flag, List<People> list, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
+        public void Velocity(string flag, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
         {
             //var epsilon = 0.005;//маленькая величина для погрешности при выходе
 
             if (flag == "metro")
             {
+                //для выходящих из метро людей
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].Vy == 0 && list[i].Vx != 0) { continue; }//когда человек вышел, то он продолжает двигаться прямолинейно
@@ -198,6 +322,16 @@ namespace LearnOpenTK_2
                     {
                         list[i].Vx = 2 * (list[i].Fx / m) * dt;
                         list[i].Vy = 2 * (list[i].Fy / m) * dt;
+                    }
+                }
+
+                // для входящих в метро людей
+                for (int j = 0; j < listInput.Count; j++)
+                {
+                    if (listInput[j].X + r/scale < 7 * 2 * r / scale)
+                    {
+                        listInput[j].Vx = 2 * (listInput[j].Fx / m) * dt;
+                        listInput[j].Vy = 2 * (listInput[j].Fy / m) * dt;
                     }
                 }
             }
@@ -219,6 +353,7 @@ namespace LearnOpenTK_2
                 }
             }
             
+
         }
 
         public void Displacement(List<People> list)

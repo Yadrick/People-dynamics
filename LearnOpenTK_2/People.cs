@@ -12,7 +12,7 @@ namespace LearnOpenTK_2
         public double X_old { get; set; }
         public double Y_old { get; set; }
         public double Pressure { get; set; }
-        public bool Position { get; set; }//отвечает, дошел ли человек до изначальной точки, куда я его направил
+        public bool Position { get; set; }//отвечает, дошел ли человек до первой точки, куда я его направил
 
         public People()
         {
