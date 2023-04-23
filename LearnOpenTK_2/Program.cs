@@ -235,11 +235,14 @@ namespace LearnOpenTK_2
             double[] stena12 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
             double[] stena10 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale };
             double[] stena8 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
-            Console.WriteLine();
+
             //перегородки между эскалаторами
             double[] stena13 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
             double[] stena14 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
 
+            //разделитель между входящим-выходящим потоком людей
+            double[] stena15 = { (x_right + 1 * 2 * r) / scale, 0, (x_right + 4 * 2 * r) / scale, 0};
+            double[] stena16 = { (x_right + 4 * 2 * r) / scale, 0, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 6.45 * 2 * r) / scale};
 
             metro.coordPair.Add(stena1);
             metro.coordPair.Add(stena2);
@@ -261,6 +264,10 @@ namespace LearnOpenTK_2
             //перегородки между эскалатоорами
             metro.coordPair.Add(stena13);
             metro.coordPair.Add(stena14);
+
+            //разделители потоков
+            metro.coordPair.Add(stena15);
+            metro.coordPair.Add(stena16);
         }
 
        
@@ -307,7 +314,7 @@ namespace LearnOpenTK_2
             //prog.CreatePeopleRoom();
             //prog.CreatePeopleMetro();
             prog.CreatePeopleMetroStatic();
-            prog.LoadingPeopleInsideMetro(-0.5);
+            prog.LoadingPeopleInsideMetro(0);//-0.5);
             prog.CreateMetro();
             //prog.CreateRoom();
             //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить

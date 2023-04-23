@@ -187,30 +187,51 @@ namespace LearnOpenTK_2
 
                 }
 
-
+                //double eps = 0.001;
                 //задается вектор силы в точку выхода i-му челу
                 if (flag == "metro")
                 {
                     //спецаильная првоерка для последнего человека
-                    if ((list[list.Count - 1].X + r / scale) >= xx - r / scale && list[list.Count - 1].Y < yy + 2 * r / scale && list[list.Count - 1].Y > yy - 2 * r / scale && !list[list.Count - 1].Position)
+                    if ((list[list.Count - 1].X + r / scale) >= xx - r / scale && list[list.Count - 1].Y < yy + 4 * r / scale && list[list.Count - 1].Y > yy - 3 * r / scale && !list[list.Count - 1].Position)
                     {
                         list[list.Count - 1].Position = true;
                     }
                     //далее для всех кроме последнего. Для последнего ниже, после цикла
-                    if ((list[i].X + r / scale) >= xx - r / scale && list[i].Y < yy + 3 * r / scale && list[i].Y > yy - 3 * r / scale && !list[i].Position)
+                    if ((list[i].X + r / scale) >= xx - r / scale && list[i].Y < yy + 4 * r / scale && list[i].Y > yy - 3 * r / scale && !list[i].Position)
                     {
                         list[i].Position = true;
                     }
                     else if (list[i].Position)
                     {
-                        if (list[i].Y > (yy1 + yy2) /2 )
+                        if (list[i].X <= 4 * 2 * r / scale - 1 * r / scale)
+                        {
+                            double y_nado = (17.3 * r - 8 * (r) - 2.1 * 2 * r) / scale;
+                            double y_nado2 = (17.3 * r - 8 * (r) - 3.6 * 2 * r) / scale;
+                            //чтобы верхние люди сразу начали двигаться в сторону верхнего выхода
+                            if (list[i].Y >= (yy1 + yy2) / 2)
+                            {
+                                rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[i].X + r / scale), 2) + Math.Pow(yy1 - list[i].Y, 2));
+                                //идет в точку x = (4 * 2 * r), (...)/2
+                                list[i].Fx += f_vector * (4 * 2 * r / scale - (list[i].X + r / scale)) / rasstoyanie;
+                                list[i].Fy += f_vector * (yy1 - list[i].Y) / rasstoyanie;
+                            }
+                            else
+                            {
+                                rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[i].X + r / scale), 2) + Math.Pow(y_nado2 - list[i].Y, 2));
+                                //идет в точку x = (4 * 2 * r), (yy1 + yy2)/2
+                                list[i].Fx += f_vector * (4 * 2 * r / scale - (list[i].X + r / scale)) / rasstoyanie;
+                                list[i].Fy += f_vector * (y_nado2 - list[i].Y) / rasstoyanie;
+                            }
+                            
+                        }
+                        else if (list[i].Y > (yy1 + yy2) /2)
                         {
                             rasstoyanie = Math.Sqrt(Math.Pow(xx1 - (list[i].X + r / scale), 2) + Math.Pow(yy1 - list[i].Y, 2));
                             //идет в точку xx1,yy1
                             list[i].Fx += f_vector * (xx1 - (list[i].X + r / scale)) / rasstoyanie;
                             list[i].Fy += f_vector * (yy1 - list[i].Y) / rasstoyanie;
                         }
-                        if (list[i].Y <= (yy1 + yy2) / 2)
+                        else if (list[i].Y <= (yy1 + yy2) / 2)
                         {
                             rasstoyanie = Math.Sqrt(Math.Pow(xx2 - (list[i].X + r / scale), 2) + Math.Pow(yy2 - list[i].Y, 2));
                             //идет в точку xx2,yy2
@@ -280,14 +301,35 @@ namespace LearnOpenTK_2
             }
             else
             {
-                if (list[list.Count - 1].Y > (yy1 + yy2) / 2)
+                
+                if (list[list.Count - 1].X <= 4 * 2 * r / scale - 1 * r / scale)
+                {
+                    double y_nado2 = (17.3 * r - 8 * (r) - 3.6 * 2 * r) / scale;
+                    //чтобы верхние люди сразу начали двигаться в сторону верхнего выхода
+                    if (list[list.Count - 1].Y >= (yy1 + yy2) / 2)
+                    {
+                        rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy1 - list[list.Count - 1].Y, 2));
+                        //идет в точку x = (4 * 2 * r), (...)/2
+                        list[list.Count - 1].Fx += f_vector * (4 * 2 * r / scale - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
+                        list[list.Count - 1].Fy += f_vector * (yy1 - list[list.Count - 1].Y) / rasstoyanie;
+                    }
+                    else
+                    {
+                        rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(y_nado2 - list[list.Count - 1].Y, 2));
+                        //идет в точку x = (4 * 2 * r), (yy1 + yy2)/2
+                        list[list.Count - 1].Fx += f_vector * (4 * 2 * r / scale - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
+                        list[list.Count - 1].Fy += f_vector * (y_nado2 - list[list.Count - 1].Y) / rasstoyanie;
+                    }
+
+                }
+                else if (list[list.Count - 1].Y > (yy1 + yy2) / 2)
                 {
                     rasstoyanie = Math.Sqrt(Math.Pow(xx1 - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy1 - list[list.Count - 1].Y, 2));
                     //идет в точку xx1,yy1
                     list[list.Count - 1].Fx += f_vector * (xx1 - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                     list[list.Count - 1].Fy += f_vector * (yy1 - list[list.Count - 1].Y) / rasstoyanie;
                 }
-                if (list[list.Count - 1].Y <= (yy1 + yy2) / 2)
+                else if (list[list.Count - 1].Y <= (yy1 + yy2) / 2)
                 {
                     rasstoyanie = Math.Sqrt(Math.Pow(xx2 - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy2 - list[list.Count - 1].Y, 2));
                     //идет в точку xx2,yy2
@@ -300,7 +342,7 @@ namespace LearnOpenTK_2
 
         public void Velocity(string flag, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
         {
-            //var epsilon = 0.005;//маленькая величина для погрешности при выходе
+            var epsilon = 0.005;//маленькая величина для погрешности при выходе
 
             if (flag == "metro")
             {
@@ -340,7 +382,7 @@ namespace LearnOpenTK_2
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].Vy == 0 && list[i].Vx != 0) { continue; }//когда человек вышел, то он продолжает двигаться прямолинейно
-                    if ((xx - (list[i].X + r / scale)) <= r / scale && (list[i].Y) < yy + h && (list[i].Y) > yy - h)//условие для прохода людей через проход?
+                    if ((xx - (list[i].X + r / scale)) <= r / scale + epsilon && (list[i].Y) < yy + h && (list[i].Y) > yy - h)//условие для прохода людей через проход?
                     {
                         list[i].Vx = 1;
                         list[i].Vy = 0;
@@ -476,26 +518,28 @@ namespace LearnOpenTK_2
 
                     }
                 }
-                //else//горизонтальные стены
-                //{
-                //    //ПОКА НЕ МОГУ ПРОВЕРИТЬ РАБОТАЕТ ЛИ КОРРЕКТНО. + НЕ ДОПИСАЛ СЛУЧАЙ ДЛЯ Y<0
-                //    for (int j = 0; j < list.Count; j++)
-                //    {
-                //        //если координата человека > начала горизонтальной линии
-                //        if (barriers.coordPair[i][0] >= list[j].X)
-                //        {
-                //            //рассматриваю стенки (и людей), которые расположены выше 0 по оси OY
-                //            if ((barriers.coordPair[i][1] > 0 && list[j].Y > 0))
-                //            {
-                //                if (list[j].Y + r / scale >= barriers.coordPair[i][1] && list[j].Y < barriers.coordPair[i][1] && (list[j].X + r / scale) >= barriers.coordPair[i][0])
-                //                {
-                //                    Console.WriteLine("есть контакт");
-                //                    list[j].Vy = -list[j].Vy;
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
+                else if ((barriers.coordPair[i][1] == barriers.coordPair[i][3]))//горизонтальные стены
+                {
+                    double eps = 0.00005;
+                    
+                    //ПОКА НЕ МОГУ ПРОВЕРИТЬ РАБОТАЕТ ЛИ КОРРЕКТНО. + НЕ ДОПИСАЛ СЛУЧАЙ ДЛЯ Y<0
+                    for (int j = 0; j < list.Count; j++)
+                    {
+                        //если коорда начала горизонтальной линии <= координаты человека
+                        if (barriers.coordPair[i][0] <= list[j].X)
+                        {
+                            //рассматриваю стенки (и людей), которые расположены выше 0 по оси OY
+                            //if ((barriers.coordPair[i][1] >= 0 && list[j].Y >= 0) && (list[j].X >= barriers.coordPair[i][0] - eps) && (list[j].X <= barriers.coordPair[i][2] + eps))
+                            //{
+                            //    if (list[j].Y - r / scale <= barriers.coordPair[i][1] + eps && list[j].Y > barriers.coordPair[i][1] + eps && (list[j].X + r / scale) >= barriers.coordPair[i][0] - eps)
+                            //    {
+                            //        Console.WriteLine("есть контакт");
+                            //        list[j].Vy = -list[j].Vy;
+                            //    }
+                            //}
+                        }
+                    }
+                }
 
             }
         }
