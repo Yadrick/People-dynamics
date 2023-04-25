@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Dynamics_peoples;
+using System;
 using System.Collections.Generic;
 
 namespace LearnOpenTK_2
 {
     public class DynamicPeoples
     {
+        public SaveData saveData = new SaveData();
+
+
         public double dt = 0.01;
         public double rasstoyanie = 10;
 
@@ -364,6 +368,11 @@ namespace LearnOpenTK_2
                     {
                         list[i].Vx = 2 * (list[i].Fx / m) * dt;
                         list[i].Vy = 2 * (list[i].Fy / m) * dt;
+
+                        if (saveData.Velocity == 0)
+                        {
+                            saveData.Velocity = Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vx);
+                        }
                     }
                 }
 
@@ -398,7 +407,53 @@ namespace LearnOpenTK_2
 
         }
 
-        public void Displacement(List<People> list)
+        public void Displacement(List<People> list, double timeWork)
+        {
+            int countPeopleExit = 0; //счетчик вышедших людей
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                //пока хз нужно будет или нет
+                list[i].X_old = list[i].X;
+                list[i].Y_old = list[i].X;
+
+                list[i].X += (list[i].Vx * dt);
+                list[i].Y += (list[i].Vy * dt);
+
+                //счетчик зашедших на эскалатор
+                if (list[i].Vx != 0 && list[i].Vy == 0)
+                {
+                    countPeopleExit++;
+                }
+
+                //время первого зашедшегго на эскалатор
+                if (countPeopleExit == 1 && saveData.timeFirstOut == 0)
+                {
+                    saveData.timeFirstOut = timeWork;
+                }
+
+                //время половины зашедших на эскалатор
+                if (countPeopleExit == list.Count/2 && saveData.timeHalfOut == 0)
+                {
+                    saveData.timeHalfOut = timeWork;
+                }
+
+                //когда все люди вышли, записываю в файл результаты
+                if (countPeopleExit == list.Count)
+                {
+                    saveData.countPeoppleOutput = list.Count;
+                    saveData.countEscalator = 2; // вручную буду переставлять)
+                    saveData.Save();
+
+                }
+
+            }
+
+
+        }
+
+        //
+        public void DisplacementInput(List<People> list)
         {
             for (int i = 0; i < list.Count; i++)
             {
@@ -409,6 +464,11 @@ namespace LearnOpenTK_2
                 list[i].X += (list[i].Vx * dt);
                 list[i].Y += (list[i].Vy * dt);
             }
+            if (list[0].Vx == 0 && list[0].Vy == 0)//если челы не двигаются по иксу, то считай их нет
+            {
+                saveData.countPeoppleInput = 0;
+            }
+
         }
 
         double nado1 = 0;

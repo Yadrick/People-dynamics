@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 40;
+        public int countPeople = 50;
         public int countPeopleInput = 10;
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -229,12 +229,12 @@ namespace LearnOpenTK_2
             double[] stena6 = { x_right / scale, (y_bot + 8 * (r)) / scale, (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
 
             //эскалаторы
-            double[] stena7 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r)) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r)) / scale };
-            double[] stena9 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale };
-            double[] stena11 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
-            double[] stena12 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
-            double[] stena10 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale };
-            double[] stena8 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale, (x_right + 9 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
+            double[] stena7 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r)) / scale, (x_right + 11 * 2 * r) / scale, (y_top - 8 * (r)) / scale };
+            double[] stena9 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 11 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale };
+            double[] stena11 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale, (x_right + 11 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
+            double[] stena12 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale, (x_right + 11 * 2 * r) / scale, (y_top - 8 * (r) - 5.7 * 2 * r) / scale };
+            double[] stena10 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale, (x_right + 11 * 2 * r) / scale, (y_bot + 8 * (r) + 2.1 * 2 * r) / scale };
+            double[] stena8 = { (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale, (x_right + 11 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
 
             //перегородки между эскалаторами
             double[] stena13 = { (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.1 * 2 * r) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 3.6 * 2 * r) / scale };
@@ -251,14 +251,14 @@ namespace LearnOpenTK_2
             metro.coordPair.Add(stena5);
             metro.coordPair.Add(stena6);
 
-            //нижние для эскалаторов
+            //стенки для эскалаторов
             metro.coordPair.Add(stena7);
-            metro.coordPair.Add(stena8);
+            metro.coordPair.Add(stena9);
 
             metro.coordPair.Add(stena11);
             metro.coordPair.Add(stena12);
 
-            metro.coordPair.Add(stena9);
+            metro.coordPair.Add(stena8);
             metro.coordPair.Add(stena10);
 
             //перегородки между эскалатоорами
@@ -298,6 +298,7 @@ namespace LearnOpenTK_2
     public class Game : GameWindow
     {
         private double frameTime = 0;
+        public double timeWorking = 0;//время работы программы
         private int fps = 0;
         Program prog = new Program();
         DynamicPeoples dynamics = new DynamicPeoples();
@@ -335,16 +336,17 @@ namespace LearnOpenTK_2
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             frameTime += args.Time;
+            timeWorking += args.Time;//время работы программы
             fps++;
 
             dynamics.Force(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
             dynamics.Velocity(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Displacement(prog.peoples);
+            dynamics.Displacement(prog.peoples, timeWorking);
 
             //для входящего потока
-            dynamics.Displacement(prog.peoplesInput);
+            dynamics.DisplacementInput(prog.peoplesInput);
 
             if (frameTime >= 1)//чтобк каждую секунду выводить коилчество кадров
             {
