@@ -20,7 +20,7 @@ namespace LearnOpenTK_2
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
         public List<People> peoplesInput = new List<People>();//будет содержать всех заходящих людей 
 
-        public Barrier room = new Barrier();//простая комната с одним выходом
+
         public Barrier metro = new Barrier();//модель местности возле эскалатора на подъеме из метро "Политехническая"
 
 
@@ -50,10 +50,7 @@ namespace LearnOpenTK_2
 
         public string flag = "metro";//моделируется метро или нет
 
-        public double r = 0.05;
-        //переменные для регулирования диапазона создания людей в Room
-        public double minValue = -0.9+0.05*2;//+r надо
-        public double maxValue = 0.9-0.05*2;
+        public double r = 0.05; //радиус людей
 
         //переменные для регулирования диапазона создания людей в Metro
         public double minValueMetro = -0.9 + 0.05 * 2;//+r надо
@@ -61,34 +58,6 @@ namespace LearnOpenTK_2
         public double maxValueMetroY = 0.9 - 0.05 * 2;
 
 
-        public void CreatePeopleRoom()//создаст людей и запихнет в массив в квадрате  minValue:maxValue
-        {
-            Random rnd = new Random();
-            double[] abc = new double[2];
-            int counts = 0;
-
-            while (peoples.Count != countPeople)
-            {
-                double x = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
-                double y = (rnd.NextDouble() * (maxValue - minValue) + minValue) / scale;
-                counts = 0;
-
-
-                //смотрю, чтобы люди не появлялись друг в друге
-                for (int i = 0; i < peoples.Count; i++)
-                {
-                    if ((x > peoples[i].X + r/scale || x  < peoples[i].X - r/scale) && (y > peoples[i].Y + r/scale || y < peoples[i].Y - r/scale))
-                    {
-                        counts++;
-                    }
-                }
-
-                if (counts == peoples.Count)
-                {
-                    peoples.Add(new People(x, y));
-                }
-            }
-        }
 
 
 
@@ -190,25 +159,12 @@ namespace LearnOpenTK_2
 
         }
 
-        //создаю комнату
-        public void CreateRoom()
-        {
-            //eps - половина расстояния прохода
-            double[] stena1 = { x_right / scale, (yy + eps) / scale, x_right / scale, y_top / scale };
-            double[] stena2 = { x_right / scale, y_top / scale, x_left / scale, y_top / scale };
-            double[] stena3 = { x_left / scale, y_top / scale, x_left / scale, y_bot / scale };
-            double[] stena4 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
-            double[] stena5 = { x_right / scale, y_bot / scale, x_right / scale, (yy - eps) / scale };
 
-            room.coordPair.Add(stena1);
-            room.coordPair.Add(stena2);
-            room.coordPair.Add(stena3);
-            room.coordPair.Add(stena4);
-            room.coordPair.Add(stena5);
-        }
-
-        public void CreateMetro()
+        public void CreateMetro(int key)
         {
+            // key = 0 - 2 подъема; key = 1 - 2 спуска
+
+
             //нужно изменить переменные для регулирования диапазона создания людей
 
 
@@ -219,7 +175,7 @@ namespace LearnOpenTK_2
             double y_top = 17.3 * r;
             double y_bot = -17.3 * r;
 
-            double[] stena1 = { x_right / scale, y_top / scale, x_left / scale, y_top / scale };
+            double[] stena1 = { x_left / scale, y_top / scale, x_right / scale, y_top / scale };
             double[] stena2 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
 
             double[] stena3 = { x_right / scale, y_top / scale, x_right / scale, (y_top - 8 * (r)) / scale };
@@ -243,6 +199,8 @@ namespace LearnOpenTK_2
             //разделитель между входящим-выходящим потоком людей
             double[] stena15 = { (x_right + 1 * 2 * r) / scale, 0, (x_right + 4 * 2 * r) / scale, 0};
             double[] stena16 = { (x_right + 4 * 2 * r) / scale, 0, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 6.45 * 2 * r) / scale};
+            //2 спуска и 1 подъем
+            double[] stena17 = { (x_right + 4 * 2 * r) / scale, 0, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.85 * 2 * r) / scale };
 
             metro.coordPair.Add(stena1);
             metro.coordPair.Add(stena2);
@@ -267,7 +225,17 @@ namespace LearnOpenTK_2
 
             //разделители потоков
             metro.coordPair.Add(stena15);
-            metro.coordPair.Add(stena16);
+            //наклонный разделитель потоков
+            if (key == 1)
+            {
+                metro.coordPair.Add(stena17);
+            }
+            else
+            {
+                metro.coordPair.Add(stena16);
+            }
+
+            
         }
 
        
@@ -312,12 +280,10 @@ namespace LearnOpenTK_2
         //инициализация ресурсов
         protected override void OnLoad()
         {
-            //prog.CreatePeopleRoom();
             //prog.CreatePeopleMetro();
             prog.CreatePeopleMetroStatic();
             prog.LoadingPeopleInsideMetro(0);//-0.5);
-            prog.CreateMetro();
-            //prog.CreateRoom();
+            prog.CreateMetro(0); // если передать 0, то будет два подъема, если 1, то будет 2 спуска
             //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить
 
 
@@ -339,11 +305,11 @@ namespace LearnOpenTK_2
             timeWorking += args.Time;//время работы программы
             fps++;
 
-            dynamics.Force(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
-            dynamics.Velocity(prog.flag, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
-            //dynamics.ContactCheck(prog.peoples, prog.room, prog.x_right / prog.scale, prog.yy / prog.scale);
+            //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
+            dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
+            dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Displacement(prog.peoples, timeWorking);
+            dynamics.Displacement(prog.peoples, timeWorking, 0); // цифра отвечает тому же, что и в Force
 
             //для входящего потока
             dynamics.DisplacementInput(prog.peoplesInput);
@@ -368,7 +334,6 @@ namespace LearnOpenTK_2
             DrawPoint(prog.peoples);//рисуются чуваки 
             DrawPoint(prog.peoplesInput);//рисуются чуваки входящие
 
-            //DrawRoom();
             DrawMetro();
 
             SwapBuffers();// в одном буфере рисует, другой показывает. Когда заканчивает рисовать, то меняет местами
@@ -382,21 +347,6 @@ namespace LearnOpenTK_2
             base.OnUnload();
         }
 
-
-        private void DrawRoom()
-        {
-            GL.LineWidth(5.0f);
-            GL.Color3(0.0, 0.0, 0.0);
-
-            GL.Begin(PrimitiveType.LineStrip);
-            for (int i = 0; i < prog.room.coordPair.Count; i++)
-            {
-                GL.Vertex2(prog.room.coordPair[i][0], prog.room.coordPair[i][1]);//первая точка от линии
-                GL.Vertex2(prog.room.coordPair[i][2], prog.room.coordPair[i][3]);//вторая точка от линии
-            }
-            GL.End();
-            // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры - сделано что-то подобное через scale
-        }
 
         private void DrawMetro()
         {
