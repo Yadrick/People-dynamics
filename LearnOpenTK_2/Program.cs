@@ -307,8 +307,10 @@ namespace LearnOpenTK_2
 
             //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
             dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
+            dynamics.WallContact(prog.peoples, prog.metro);
             dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
-            dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
+            
+            //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
             dynamics.Displacement(prog.peoples, timeWorking, 0); // цифра отвечает тому же, что и в Force
 
             //для входящего потока

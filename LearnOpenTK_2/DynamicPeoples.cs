@@ -39,6 +39,7 @@ namespace LearnOpenTK_2
         public double force_Lennard = 0;
         public double potential_Lennard = 0;
         public double d = 3; // энергия связи
+        public double d2 = 1; // энергия связи со стеной?
         public double a = 1; //длина связи
 
         //собственное пространство частицы
@@ -93,7 +94,7 @@ namespace LearnOpenTK_2
                     pr_x = (listInput[i].X - listInput[j].X) / (distance_peop);
                     pr_y = (listInput[i].Y - listInput[j].Y) / (distance_peop);
 
-                    s = 2 * (r / scale) / distance_peop;
+                    s = 1.95 * (r / scale) / distance_peop; //правильно будет 2 * ...
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -131,7 +132,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - list[j].X) / (distance_peop);
                     pr_y = (list[i].Y - list[j].Y) / (distance_peop);
 
-                    s = 2*(r/scale) / distance_peop;
+                    s = 1.95 *(r/scale) / distance_peop; //правильно будет 2 * ...
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard =  12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a,2) ;//на вектор взаимодействия умножается ниже
 
@@ -178,7 +179,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - listInput[j].X) / (distance_peop);
                     pr_y = (list[i].Y - listInput[j].Y) / (distance_peop);
 
-                    s = 2 * (r / scale) / distance_peop;
+                    s = 1.95 * (r / scale) / distance_peop; //правильно будет 2 * ...
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -348,7 +349,103 @@ namespace LearnOpenTK_2
 
         }
 
-        public void Velocity(List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
+        public void WallContact(List<People> list, Barrier barriers)
+        {
+            double s = 0;
+
+            // считаю силы взаимодействия между i-тым челом и СТЕНАМИ
+            for (int i = 0; i < list.Count; i++)
+            {
+                force_Lennard = 0;
+                potential_Lennard = 0;
+
+
+                for (int j = 0; j < barriers.coordPair.Count; j++)
+                {
+                    // ПОКА ЧТО смотрю контакт только после X=0
+                    if (list[i].X >= 0)
+                    {
+                        if (barriers.coordPair[j][0] == barriers.coordPair[j][2])// иксы точек равны, значит вертикальная прямая
+                        {
+                            // уравнение прямой будет x = barriers.coordPair[j][0]
+                            // расстояние от точки до прямой: d = Math.Abs(A * Mx + B * My + C) / Math.Sqrt(A^2+B^2);
+                            // где уравнение прямой в канон. виде: Ax+By+C=0, Mx и My - координаты центра человека
+                            // в данном случае B = 0, x = -C/A
+                            if ((list[i].Y >= barriers.coordPair[j][1] && list[i].Y < barriers.coordPair[j][3]) || (list[i].Y < barriers.coordPair[j][1] && list[i].Y >= barriers.coordPair[j][3]))
+                            {
+                                distance_peop = Math.Abs((list[i].X + r / scale) - barriers.coordPair[j][0]);
+
+                                if (list[i].X + r/scale <= barriers.coordPair[j][0])
+                                {
+                                    pr_x = -1;
+                                }
+                                else
+                                {
+                                    pr_x = 1;
+                                }
+                                pr_y = 0;
+                            }
+                            else
+                            {
+                                pr_x = 0;
+                                pr_y = 0;
+                            }
+
+                        }
+                        else if (barriers.coordPair[j][1] == barriers.coordPair[j][3])// игреки точек равны, значит горизонтальная прямая
+                        {
+                            // уравнение прямой будет y = barriers.coordPair[j][3]
+                            // расстояние от точки до прямой: d = Math.Abs(A * Mx + B * My + C) / Math.Sqrt(A^2+B^2);
+                            // где уравнение прямой: Ax+By+C=0, Mx и My - координаты центра человека
+                            // в данном случае A = 0, y = -C/B
+                            if ((list[i].X + r/scale >= barriers.coordPair[j][0] && list[i].X + r / scale < barriers.coordPair[j][2]) || (list[i].X + r / scale < barriers.coordPair[j][0] && list[i].X + r / scale >= barriers.coordPair[j][2]))
+                            {
+                                distance_peop = Math.Abs(list[i].Y - barriers.coordPair[j][3]);
+
+                                if (list[i].Y <= barriers.coordPair[j][1])
+                                {
+                                    pr_y = -1;
+                                }
+                                else
+                                {
+                                    pr_y = 1;
+                                }
+                                pr_x = 0;
+                            }
+                            else
+                            {
+                                pr_x = 0;
+                                pr_y = 0;
+                            }
+                        }
+                        else//если наклонные прямые, пока что такое условие)
+                        {
+                            pr_x = 0;
+                            pr_y = 0;
+                        }
+
+                        s = 1 * (r / scale) / distance_peop;
+                        potential_Lennard = d2 * (Math.Pow(s, 12) - Math.Pow(s, 6));
+                        force_Lennard = 12 * d2 * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
+
+                        if (potential_Lennard >= 0)
+                        {
+                            list[i].Fx += (force_Lennard) * pr_x;
+                            list[i].Fy += (force_Lennard) * pr_y;
+                        }
+                    }
+                    
+
+                }
+
+            }
+        }
+
+
+
+
+
+            public void Velocity(List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
         {
             //var epsilon = 0.005;//маленькая величина для погрешности при выходе
 
