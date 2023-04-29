@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 50;
+        public int countPeople = 70;
         public int countPeopleInput = 10;
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -175,11 +175,11 @@ namespace LearnOpenTK_2
             double y_top = 17.3 * r;
             double y_bot = -17.3 * r;
 
-            double[] stena1 = { x_left / scale, y_top / scale, x_right / scale, y_top / scale };
-            double[] stena2 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };
+            double[] stena1 = { x_left / scale, y_top / scale, x_right / scale, y_top / scale };//верхняя горизонт
+            double[] stena2 = { x_left / scale, y_bot / scale, x_right / scale, y_bot / scale };//нижняя горизонт
 
-            double[] stena3 = { x_right / scale, y_top / scale, x_right / scale, (y_top - 8 * (r)) / scale };
-            double[] stena4 = { x_right / scale, y_bot / scale, x_right / scale, (y_bot + 8 * (r)) / scale };
+            double[] stena3 = { x_right / scale, y_top / scale, x_right / scale, (y_top - 8 * (r)) / scale };//левая верхняя веретикальная 
+            double[] stena4 = { x_right / scale, y_bot / scale, x_right / scale, (y_bot + 8 * (r)) / scale };//левая нижняя веретикальная 
 
             double[] stena5 = { x_right / scale, (y_top - 8 * (r)) / scale, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r)) / scale};
             double[] stena6 = { x_right / scale, (y_bot + 8 * (r)) / scale, (x_right + 7 * 2 * r) / scale, (y_bot + 8 * (r)) / scale };
@@ -199,7 +199,7 @@ namespace LearnOpenTK_2
             //разделитель между входящим-выходящим потоком людей
             double[] stena15 = { (x_right + 1 * 2 * r) / scale, 0, (x_right + 4 * 2 * r) / scale, 0};
             double[] stena16 = { (x_right + 4 * 2 * r) / scale, 0, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 6.45 * 2 * r) / scale};
-            //2 спуска и 1 подъем
+            //2 эскалатора на спускк и 1 на подъем
             double[] stena17 = { (x_right + 4 * 2 * r) / scale, 0, (x_right + 7 * 2 * r) / scale, (y_top - 8 * (r) - 2.85 * 2 * r) / scale };
 
             metro.coordPair.Add(stena1);
@@ -235,7 +235,36 @@ namespace LearnOpenTK_2
                 metro.coordPair.Add(stena16);
             }
 
-            
+            ////////////////////////////////////////////////////////////////////////////
+            ///Добавляю точки-барьеры на стыках линий
+            double radiusBar = 0.01;
+            double[] proba0 = { stena15[2] - radiusBar / scale, stena15[1], radiusBar };
+            double[] proba1 = { stena15[0] - radiusBar/scale, stena15[1], radiusBar };
+            double[] proba2 = { stena3[0] - radiusBar / scale, stena3[3], radiusBar };
+            double[] proba3 = { stena3[0] - radiusBar / scale, stena3[1], radiusBar };
+            double[] proba4 = { stena4[0] - radiusBar / scale, stena4[1], radiusBar };
+            double[] proba5 = { stena4[0] - radiusBar / scale, stena4[3], radiusBar };
+            double[] proba10 = { stena7[0] - radiusBar / scale, stena7[1], radiusBar };
+            double[] proba11 = { stena8[0] - radiusBar / scale, stena8[1], radiusBar };
+
+            double[] proba6 = { stena13[0] - radiusBar / scale, stena13[1], radiusBar };
+            double[] proba7 = { stena13[0] - radiusBar / scale, stena13[3], radiusBar };
+
+            double[] proba8 = { stena14[0] - radiusBar / scale, stena14[1], radiusBar };
+            double[] proba9 = { stena14[0] - radiusBar / scale, stena14[3], radiusBar };
+
+            metro.circles.Add(proba0);
+            metro.circles.Add(proba1);
+            metro.circles.Add(proba2);
+            metro.circles.Add(proba3);
+            metro.circles.Add(proba4);
+            metro.circles.Add(proba5);
+            metro.circles.Add(proba6);
+            metro.circles.Add(proba7);
+            metro.circles.Add(proba8);
+            metro.circles.Add(proba9);
+            metro.circles.Add(proba10);
+            metro.circles.Add(proba11);
         }
 
        
@@ -284,6 +313,8 @@ namespace LearnOpenTK_2
             prog.CreatePeopleMetroStatic();
             prog.LoadingPeopleInsideMetro(0);//-0.5);
             prog.CreateMetro(0); // если передать 0, то будет два подъема, если 1, то будет 2 спуска
+            
+
             //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить
 
 
@@ -336,7 +367,9 @@ namespace LearnOpenTK_2
             DrawPoint(prog.peoples);//рисуются чуваки 
             DrawPoint(prog.peoplesInput);//рисуются чуваки входящие
 
-            DrawMetro();
+            DrawMetro(); //рисуется метро(барьеры)
+            DrawPointBarrier(prog.metro.circles);//рисуются круглые барьеры
+            
 
             SwapBuffers();// в одном буфере рисует, другой показывает. Когда заканчивает рисовать, то меняет местами
             base.OnRenderFrame(args);
@@ -397,6 +430,34 @@ namespace LearnOpenTK_2
                 }
                 GL.End();
             }   
+        }
+
+        //рисует человечка-точку
+        private void DrawPointBarrier(List<double[]> circles)
+        {
+            int cnt = 12;//количество граней для "круга"
+            double da = Math.PI * 2.0 / cnt;
+
+            double[][] circles2 = circles.ToArray();
+            double[] x = new double[circles2.Length];
+            double[] y = new double[circles2.Length];
+
+
+            for (int j = 0; j < circles2.Length; j++)
+            {
+                x[j] = circles2[j][0];
+                y[j] = circles2[j][1];
+
+                GL.Begin(PrimitiveType.TriangleFan);
+                GL.Color3(0.0, 0.0, 0.0);
+                for (int i = 0; i <= cnt; i++)
+                {
+                    x[j] += circles2[j][2] * Math.Sin(da * i);
+                    y[j] += circles2[j][2] * Math.Cos(da * i);
+                    GL.Vertex2(x[j], y[j]);
+                }
+                GL.End();
+            }
         }
     }
 }

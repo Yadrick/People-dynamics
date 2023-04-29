@@ -33,7 +33,7 @@ namespace LearnOpenTK_2
         //public double f_ott = 0;//сила отталкивания людей друг от друга
         public double f_upr = 0;//сила упругости между людьми
 
-        public double f_vector = 150;//модуль направляющей силы
+        public double f_vector = 100;//модуль направляющей силы
 
         //Сила взаимодействия, соответствующая Потенциалу Леннарда-Джонса
         public double force_Lennard = 0;
@@ -360,6 +360,30 @@ namespace LearnOpenTK_2
                 potential_Lennard = 0;
 
 
+                for (int k = 0; k < barriers.circles.Count; k++)
+                {
+
+                    distance_peop = Math.Sqrt(Math.Pow((barriers.circles[k][0] - list[i].X), 2) + Math.Pow((barriers.circles[k][1] - list[i].Y), 2));
+                    pr_x = (list[i].X - barriers.circles[k][0]) / (distance_peop);
+                    pr_y = (list[i].Y - barriers.circles[k][1]) / (distance_peop);
+
+                    s = 1.5 * (r / scale) / distance_peop; //правильно будет 2 * ...
+                    potential_Lennard = d2 * (Math.Pow(s, 12) - Math.Pow(s, 6));
+                    force_Lennard = 12 * d2 * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
+
+
+                    if (potential_Lennard >= 0)
+                    {
+                        //Console.WriteLine($"{ (force_Lennard) * pr_x} && {(force_Lennard) * pr_y}");
+                        list[i].Fx += (force_Lennard) * pr_x;
+                        list[i].Fy += (force_Lennard) * pr_y;
+                    }
+                    
+                }
+
+
+
+
                 for (int j = 0; j < barriers.coordPair.Count; j++)
                 {
                     // ПОКА ЧТО смотрю контакт только после X=0
@@ -424,7 +448,7 @@ namespace LearnOpenTK_2
                             pr_y = 0;
                         }
 
-                        s = 1 * (r / scale) / distance_peop;
+                        s = 1.1 * (r / scale) / distance_peop;
                         potential_Lennard = d2 * (Math.Pow(s, 12) - Math.Pow(s, 6));
                         force_Lennard = 12 * d2 * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -434,8 +458,6 @@ namespace LearnOpenTK_2
                             list[i].Fy += (force_Lennard) * pr_y;
                         }
                     }
-                    
-
                 }
 
             }
@@ -467,6 +489,8 @@ namespace LearnOpenTK_2
                 {
                     list[i].Vx = 2 * (list[i].Fx / m) * dt;
                     list[i].Vy = 2 * (list[i].Fy / m) * dt;
+                    //list[i].Vx = 0;
+                    //list[i].Vy = 0;
 
                     if (saveData.Velocity == 0)
                     {
