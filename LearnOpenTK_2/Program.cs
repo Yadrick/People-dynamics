@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 70;
+        public int countPeople = 80;
         public int countPeopleInput = 10;
 
         public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
@@ -337,12 +337,12 @@ namespace LearnOpenTK_2
             fps++;
 
             //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
-            dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale);
+            dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, prog.metro);
             dynamics.WallContact(prog.peoples, prog.metro);
             dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             
             //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Displacement(prog.peoples, timeWorking, 0); // цифра отвечает тому же, что и в Force
+            dynamics.Displacement(prog.peoples, 0); // цифра отвечает тому же, что и в Force
 
             //для входящего потока
             dynamics.DisplacementInput(prog.peoplesInput);

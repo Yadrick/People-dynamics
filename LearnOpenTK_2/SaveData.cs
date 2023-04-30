@@ -19,6 +19,7 @@ namespace Dynamics_peoples
         public int countSufferer { get; set; }          // число пострадавших
         public string isolation = "_______________________________________________________________";// чтобы разграничивать эксперементы в файле
         public bool flag = false;
+        public bool flag2 = false;
         
 
         string path = @"D:\POLITECH\4 course\Diplom\data.txt";
@@ -28,20 +29,36 @@ namespace Dynamics_peoples
         {
             if (flag == false)
             {
+                try
+                {
+                    using (StreamReader reader = new StreamReader(path))
+                    {
+                        if (reader.Peek() != -1)
+                        {
+                            Console.WriteLine("ne pysto");
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    flag2 = true;
+                }
+
                 using (StreamWriter writer = new StreamWriter(path, true)) // true - добавлять данные в конец файла, false - перезаписывать
                 {
-                    writer.WriteLine($"людей заходят;{countPeoppleInput}");
-                    writer.WriteLine($"людей выходят;{countPeoppleOutput}");
-                    writer.WriteLine($"скорость;{Velocity}");
-                    writer.WriteLine($"кол-во эскалаторов на подъем;{countEscalator}");
-                    writer.WriteLine($"время выхода первого человека;{timeFirstOut}");
-                    writer.WriteLine($"время выхода половины всех людей;{timeHalfOut}");
-                    writer.WriteLine($"максимальное давление, оказываемое на человека;{maxPressure}");
-                    writer.WriteLine($"число пострадавших;{countSufferer}");
-                    writer.WriteLine($"{isolation}");
+   
+                    if (flag2)
+                    {
+                        writer.WriteLine("людей_заходят;людей_выходят;скорость;кол-во_эскалаторов_на_подъем;время_выхода_первого_человека;время_выхода_половины_всех_людей;максимальное_давление_оказываемое_на_человека;число_пострадавших");
+                    }
+
+                    writer.WriteLine($"{countPeoppleInput};{countPeoppleOutput};{Velocity};{countEscalator};{timeFirstOut};{timeHalfOut};{maxPressure};{countSufferer}");
+
 
                     Console.WriteLine("записал");
                 }
+
+                
 
                 flag = true;
             }

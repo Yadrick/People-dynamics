@@ -9,7 +9,8 @@ namespace LearnOpenTK_2
         public SaveData saveData = new SaveData();
 
 
-        public double dt = 0.01;
+        public double dt = 0.015;
+        double time = 0;//буду здесь фиксировать прошедшее время
         public double rasstoyanie = 10;
 
 
@@ -51,7 +52,7 @@ namespace LearnOpenTK_2
        // private double xx = 1.8;
         //private double yy = 0;
 
-        public void Force(int key, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2)
+        public void Force(int key, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, Barrier barriers)
         {
             // key отвечает за кол-во эскалаторов на подъем и спуск:
             // key = 0 - два подъема, key = 1 - два спуска
@@ -258,6 +259,12 @@ namespace LearnOpenTK_2
                 {
                     list[i].Fx += f_vector * (xx - (list[i].X + r / scale)) / rasstoyanie;
                     list[i].Fy += f_vector * (yy - list[i].Y) / rasstoyanie;
+                }
+
+                //если челы зашли под перегородку, то им надо выходить от туда
+                if (list[i].Y < barriers.coordPair[14][1] && list[i].X > barriers.coordPair[14][0] && list[i].X < barriers.coordPair[14][2])
+                {
+                    list[i].Position = false;
                 }
 
             }
@@ -467,7 +474,7 @@ namespace LearnOpenTK_2
 
 
 
-            public void Velocity(List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
+        public void Velocity(List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, double h)
         {
             //var epsilon = 0.005;//маленькая величина для погрешности при выходе
 
@@ -487,8 +494,8 @@ namespace LearnOpenTK_2
                 }
                 else
                 {
-                    list[i].Vx = 2 * (list[i].Fx / m) * dt;
-                    list[i].Vy = 2 * (list[i].Fy / m) * dt;
+                    list[i].Vx = (list[i].Fx / m) * dt;
+                    list[i].Vy = (list[i].Fy / m) * dt;
                     //list[i].Vx = 0;
                     //list[i].Vy = 0;
 
@@ -511,9 +518,10 @@ namespace LearnOpenTK_2
             
         }
 
-        public void Displacement(List<People> list, double timeWork, int countEsc)
+        public void Displacement(List<People> list, int countEsc)
         {
             int countPeopleExit = 0; //счетчик вышедших людей
+            time += dt;
 
             for (int i = 0; i < list.Count; i++)
             {
@@ -533,13 +541,13 @@ namespace LearnOpenTK_2
                 //время первого зашедшегго на эскалатор
                 if (countPeopleExit == 1 && saveData.timeFirstOut == 0)
                 {
-                    saveData.timeFirstOut = timeWork;
+                    saveData.timeFirstOut = time;
                 }
 
                 //время половины зашедших на эскалатор
                 if (countPeopleExit == list.Count/2 && saveData.timeHalfOut == 0)
                 {
-                    saveData.timeHalfOut = timeWork;
+                    saveData.timeHalfOut = time;
                 }
 
                 //когда все люди вышли, записываю в файл результаты
