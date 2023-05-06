@@ -50,9 +50,12 @@ namespace LearnOpenTK_2
         public double scale = 0.5;// множитель масшттаба
 
         //точка для притягивания людишек в комнате - передается прямо в метод
-       // private double xx = 1.8;
+        // private double xx = 1.8;
         //private double yy = 0;
 
+
+
+        double per = 0;// просто нужна внутри метода
         public void Force(int key, List<People> list, List<People> listInput, double xx, double yy, double xx1, double yy1, double xx2, double yy2, Barrier barriers)
         {
             // key отвечает за кол-во эскалаторов на подъем и спуск:
@@ -228,6 +231,18 @@ namespace LearnOpenTK_2
                         if (list[i].Y >= (yy1 + yy2) / 2)
                         {
                             rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[i].X + r / scale), 2) + Math.Pow(yy1 - list[i].Y, 2));
+
+                            //пробую уменьшить движущую силу людей, который встали в пробку
+                            if (list[i].BeforeForce >= 150)
+                            {
+                                f_vector = 10;
+                            }
+                            else
+                            {
+                                f_vector = 100;
+                            }
+
+
                             //идет в точку x = (4 * 2 * r), (...)/2
                             list[i].Fx += f_vector * (4 * 2 * r / scale - (list[i].X + r / scale)) / rasstoyanie;
                             list[i].Fy += f_vector * (yy1 - list[i].Y) / rasstoyanie;
@@ -236,6 +251,17 @@ namespace LearnOpenTK_2
                         {
                             rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[i].X + r / scale), 2) + Math.Pow(y_nado2 - list[i].Y, 2));
                             //идет в точку x = (4 * 2 * r), (yy1 + yy2)/2
+
+                            //пробую уменьшить движущую силу людей, который встали в пробку
+                            if (list[i].BeforeForce >= 150)
+                            {
+                                f_vector = 10; 
+                            }
+                            else
+                            {
+                                f_vector = 100;
+                            }
+
                             list[i].Fx += f_vector * (4 * 2 * r / scale - (list[i].X + r / scale)) / rasstoyanie;
                             list[i].Fy += f_vector * (y_nado2 - list[i].Y) / rasstoyanie;
                         }
@@ -245,6 +271,17 @@ namespace LearnOpenTK_2
                     {
                         rasstoyanie = Math.Sqrt(Math.Pow(xx1 - (list[i].X + r / scale), 2) + Math.Pow(yy1 - list[i].Y, 2));
                         //идет в точку xx1,yy1
+
+                        //пробую уменьшить движущую силу людей, который встали в пробку
+                        if (list[i].BeforeForce >= 150)
+                        {
+                            f_vector = 10; 
+                        }
+                        else
+                        {
+                            f_vector = 100;
+                        }
+
                         list[i].Fx += f_vector * (xx1 - (list[i].X + r / scale)) / rasstoyanie;
                         list[i].Fy += f_vector * (yy1 - list[i].Y) / rasstoyanie;
                     }
@@ -252,12 +289,34 @@ namespace LearnOpenTK_2
                     {
                         rasstoyanie = Math.Sqrt(Math.Pow(xx2 - (list[i].X + r / scale), 2) + Math.Pow(yy2 - list[i].Y, 2));
                         //идет в точку xx2,yy2
+
+                        //пробую уменьшить движущую силу людей, который встали в пробку
+                        if (list[i].BeforeForce >= 150)
+                        {
+                            f_vector = 10;
+                        }
+                        else
+                        {
+                            f_vector = 100;
+                        }
+
                         list[i].Fx += f_vector * (xx2 - (list[i].X + r / scale)) / rasstoyanie;
                         list[i].Fy += f_vector * (yy2 - list[i].Y) / rasstoyanie;
                     }
                 }
                 else
                 {
+
+                    //пробую уменьшить движущую силу людей, который встали в пробку
+                    if (list[i].BeforeForce >= 150)
+                    {
+                        f_vector = 10;
+                    }
+                    else
+                    {
+                        f_vector = 100;
+                    }
+
                     list[i].Fx += f_vector * (xx - (list[i].X + r / scale)) / rasstoyanie;
                     list[i].Fy += f_vector * (yy - list[i].Y) / rasstoyanie;
                 }
@@ -313,6 +372,18 @@ namespace LearnOpenTK_2
             if (!list[list.Count - 1].Position)
             {
                 rasstoyanie = Math.Sqrt(Math.Pow(xx - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy - list[list.Count - 1].Y, 2));
+
+
+                //пробую уменьшить движущую силу людей, который встали в пробку
+                if (list[list.Count - 1].BeforeForce >= 150)
+                {
+                    f_vector = 10;
+                }
+                else
+                {
+                    f_vector = 100;
+                }
+
                 list[list.Count - 1].Fx += f_vector * (xx - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                 list[list.Count - 1].Fy += f_vector * (yy - list[list.Count - 1].Y) / rasstoyanie;
             }
@@ -327,6 +398,18 @@ namespace LearnOpenTK_2
                     {
                         rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy1 - list[list.Count - 1].Y, 2));
                         //идет в точку x = (4 * 2 * r), (...)/2
+
+                        //пробую уменьшить движущую силу людей, который встали в пробку
+                        if (list[list.Count - 1].BeforeForce >= 150)
+                        {
+                            f_vector = 10;
+                        }
+                        else
+                        {
+                            f_vector = 100;
+                        }
+
+
                         list[list.Count - 1].Fx += f_vector * (4 * 2 * r / scale - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                         list[list.Count - 1].Fy += f_vector * (yy1 - list[list.Count - 1].Y) / rasstoyanie;
                     }
@@ -334,6 +417,17 @@ namespace LearnOpenTK_2
                     {
                         rasstoyanie = Math.Sqrt(Math.Pow(4 * 2 * r / scale - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(y_nado2 - list[list.Count - 1].Y, 2));
                         //идет в точку x = (4 * 2 * r), (yy1 + yy2)/2
+
+                        //пробую уменьшить движущую силу людей, который встали в пробку
+                        if (list[list.Count - 1].BeforeForce >= 150)
+                        {
+                            f_vector = 10;
+                        }
+                        else
+                        {
+                            f_vector = 100;
+                        }
+
                         list[list.Count - 1].Fx += f_vector * (4 * 2 * r / scale - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                         list[list.Count - 1].Fy += f_vector * (y_nado2 - list[list.Count - 1].Y) / rasstoyanie;
                     }
@@ -343,6 +437,17 @@ namespace LearnOpenTK_2
                 {
                     rasstoyanie = Math.Sqrt(Math.Pow(xx1 - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy1 - list[list.Count - 1].Y, 2));
                     //идет в точку xx1,yy1
+
+                    //пробую уменьшить движущую силу людей, который встали в пробку
+                    if (list[list.Count - 1].BeforeForce >= 150)
+                    {
+                        f_vector = 10;
+                    }
+                    else
+                    {
+                        f_vector = 100;
+                    }
+
                     list[list.Count - 1].Fx += f_vector * (xx1 - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                     list[list.Count - 1].Fy += f_vector * (yy1 - list[list.Count - 1].Y) / rasstoyanie;
                 }
@@ -350,8 +455,32 @@ namespace LearnOpenTK_2
                 {
                     rasstoyanie = Math.Sqrt(Math.Pow(xx2 - (list[list.Count - 1].X + r / scale), 2) + Math.Pow(yy2 - list[list.Count - 1].Y, 2));
                     //идет в точку xx2,yy2
+
+                    //пробую уменьшить движущую силу людей, который встали в пробку
+                    if (list[list.Count - 1].BeforeForce >= 150)
+                    {
+                        f_vector = 10;
+                        
+                    }
+                    else
+                    {
+                        f_vector = 100;
+                    }
+
                     list[list.Count - 1].Fx += f_vector * (xx2 - (list[list.Count - 1].X + r / scale)) / rasstoyanie;
                     list[list.Count - 1].Fy += f_vector * (yy2 - list[list.Count - 1].Y) / rasstoyanie;
+                }
+            }
+
+            
+            for (int i = 0; i < list.Count; i++)
+            {
+                per = Math.Sqrt(Math.Pow(list[i].Fx, 2) + Math.Pow(list[i].Fy, 2));//сила, оказываемая на i-го чела
+                list[i].BeforeForce = per;
+
+                if (list[i].MaxForce <= Math.Abs(per))
+                {
+                    list[i].MaxForce = Math.Abs(per);
                 }
             }
 
@@ -520,6 +649,9 @@ namespace LearnOpenTK_2
             
         }
 
+
+        double averageForce = 0;//нужны для подсчета дисперсии модуля силы
+        double averageSquareForce = 0;
         public void Displacement(List<People> list, int countEsc, int countVagon)
         {
             int countPeopleExit = 0; //счетчик вышедших людей
@@ -557,6 +689,22 @@ namespace LearnOpenTK_2
                 {
                     saveData.countPeoppleOutput = list.Count;
                     saveData.countVagon = countVagon;
+
+
+                    //буду считать дисперсию модуля силы
+
+                    for (int j = 0; j < list.Count; j++)
+                    {
+                        averageSquareForce += Math.Pow(list[j].MaxForce,2);
+                        averageForce += list[j].MaxForce;
+                        //Console.WriteLine(list[j].MaxForce);
+                    }
+                    //Console.WriteLine("__________________________________________________________________");
+                    averageSquareForce /= list.Count;
+                    averageForce /= list.Count;
+
+                    saveData.forceDispersion = averageSquareForce - averageForce;
+
 
                     if (countEsc == 0)
                     {

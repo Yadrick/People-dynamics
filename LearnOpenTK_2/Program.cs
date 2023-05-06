@@ -14,7 +14,7 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 60;                            //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
+        public int countPeople = 100;                            //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
         public int countPeopleInput = 10;
         public int countVagons = 2;                             //число вагонов поезда (всего 2 поезда => 4 вагона)
 
@@ -118,7 +118,7 @@ namespace LearnOpenTK_2
                     // a - условно отвечает за номер двери при выходе из выгона
                     a = rnd.Next(0, 4);
                     //+ r*rnd.Next(0,2) - смещение на r вправо
-                    double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (21 * 2 * r)) /scale;
+                    double x = (a * ((-8 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (30 * 2 * r)) /scale;
 
                     //massiv[a]++;
                     massiv2[j][a]++;
@@ -139,7 +139,7 @@ namespace LearnOpenTK_2
                 {
                     a = rnd.Next(0, 4);
                     //+ Math.Pow(-1, rnd.Next(1, 2))*r*rnd.Next(0,2) - смещение на r вправо-влево
-                    double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (21 * 2 * r)) / scale;
+                    double x = (a * ((-8 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (30 * 2 * r)) / scale;
 
                     //massiv[a]++;
                     massiv2[j][a]++;

@@ -12,6 +12,8 @@ namespace LearnOpenTK_2
         public double X_old { get; set; }
         public double Y_old { get; set; }
         public double Pressure { get; set; }
+        public double MaxForce { get; set; } // буду присваивать максимальную силу, действующую на человека
+        public double BeforeForce { get; set; } // сила, которая была на предыдущем шаге
         public bool Position { get; set; }//отвечает, дошел ли человек до первой точки, куда я его направил
 
         public People()
@@ -24,6 +26,7 @@ namespace LearnOpenTK_2
             Fy = 0;
             Pressure = 0;
             Position = false;
+            MaxForce = 0;
         }
 
         public People(double x, double y)
@@ -38,6 +41,7 @@ namespace LearnOpenTK_2
             Fy = 0;
             Pressure = 0;
             Position = false;
+            MaxForce = 0;
         }
 
         public People(double x, double y, double vx, double vy)
@@ -52,6 +56,7 @@ namespace LearnOpenTK_2
             Fy = 0;
             Pressure = 0;
             Position = false;
+            MaxForce = 0;
         }
 
     }

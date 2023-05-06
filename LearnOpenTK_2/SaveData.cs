@@ -16,7 +16,12 @@ namespace Dynamics_peoples
         public double timeFirstOut { get; set; }        // время выхода на эскалатор первого человека
         public double timeOut { get; set; }             // время выхода всех людей
         public double maxPressure { get; set; }         // максимальное давление
+
+        public double forceDispersion { get; set; }     // дисперсия модуля силы
         public int countSufferer { get; set; }          // число пострадавших
+
+
+
         public string isolation = "_______________________________________________________________";// чтобы разграничивать эксперементы в файле
         public bool flag = false;
         public bool flag2 = false;
@@ -52,10 +57,10 @@ namespace Dynamics_peoples
    
                     if (flag2)
                     {
-                        writer.WriteLine("людей_выходят;скорость;кол-во_вагонов;кол-во_эскалаторов_на_подъем;время_выхода_первого_человека;время_выхода_всех_людей;delta_t;максимальное_давление_оказываемое_на_человека;число_пострадавших");
+                        writer.WriteLine("людей_выходят;скорость;кол-во_вагонов;кол-во_эскалаторов_на_подъем;время_выхода_первого_человека;время_выхода_всех_людей;delta_t;дисперсия_модуля_силы;число_пострадавших");
                     }
 
-                    writer.WriteLine($"{countPeoppleOutput};{Velocity};{countVagon};{countEscalator};{timeFirstOut};{timeOut};{timeOut-timeFirstOut};{maxPressure};{countSufferer}");
+                    writer.WriteLine($"{countPeoppleOutput};{Velocity};{countVagon};{countEscalator};{timeFirstOut};{timeOut};{timeOut-timeFirstOut};{forceDispersion};{countSufferer}");
 
 
                     Console.WriteLine("записал");
