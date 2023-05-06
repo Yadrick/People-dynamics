@@ -13,6 +13,7 @@ namespace LearnOpenTK_2
         double time = 0;//буду здесь фиксировать прошедшее время
         public double rasstoyanie = 10;
 
+        public double v_0_scale = 1;
 
         public double rasstoyanie2 = 10;//просто расстояние, потом пересчитывается
         public double x_nado = 0;
@@ -95,7 +96,7 @@ namespace LearnOpenTK_2
                     pr_x = (listInput[i].X - listInput[j].X) / (distance_peop);
                     pr_y = (listInput[i].Y - listInput[j].Y) / (distance_peop);
 
-                    s = 1.95 * (r / scale) / distance_peop; //правильно будет 2 * ...
+                    s = 1.95 * (r / scale) / distance_peop; //
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -133,7 +134,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - list[j].X) / (distance_peop);
                     pr_y = (list[i].Y - list[j].Y) / (distance_peop);
 
-                    s = 1.95 *(r/scale) / distance_peop; //правильно будет 2 * ...
+                    s = 1.95 *(r/scale) / distance_peop; //
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard =  12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a,2) ;//на вектор взаимодействия умножается ниже
 
@@ -180,7 +181,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - listInput[j].X) / (distance_peop);
                     pr_y = (list[i].Y - listInput[j].Y) / (distance_peop);
 
-                    s = 1.95 * (r / scale) / distance_peop; //правильно будет 2 * ...
+                    s = 1.95 * (r / scale) / distance_peop; //
                     potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -494,14 +495,15 @@ namespace LearnOpenTK_2
                 }
                 else
                 {
-                    list[i].Vx = (list[i].Fx / m) * dt;
-                    list[i].Vy = (list[i].Fy / m) * dt;
+                    list[i].Vx = v_0_scale * (list[i].Fx / m) * dt;
+                    list[i].Vy = v_0_scale * (list[i].Fy / m) * dt;
                     //list[i].Vx = 0;
                     //list[i].Vy = 0;
 
                     if (saveData.Velocity == 0)
                     {
-                        saveData.Velocity = Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vx);
+                        Console.WriteLine(Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vy));
+                        saveData.Velocity = Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vy);
                     }
                 }
             }
@@ -518,7 +520,7 @@ namespace LearnOpenTK_2
             
         }
 
-        public void Displacement(List<People> list, int countEsc)
+        public void Displacement(List<People> list, int countEsc, int countVagon)
         {
             int countPeopleExit = 0; //счетчик вышедших людей
             time += dt;
@@ -544,16 +546,17 @@ namespace LearnOpenTK_2
                     saveData.timeFirstOut = time;
                 }
 
-                //время половины зашедших на эскалатор
-                if (countPeopleExit == list.Count/2 && saveData.timeHalfOut == 0)
+                //время всех зашедших на эскалатор
+                if (countPeopleExit == list.Count && saveData.timeOut == 0)
                 {
-                    saveData.timeHalfOut = time;
+                    saveData.timeOut = time;
                 }
 
                 //когда все люди вышли, записываю в файл результаты
                 if (countPeopleExit == list.Count)
                 {
                     saveData.countPeoppleOutput = list.Count;
+                    saveData.countVagon = countVagon;
 
                     if (countEsc == 0)
                     {
@@ -584,10 +587,6 @@ namespace LearnOpenTK_2
 
                 list[i].X += (list[i].Vx * dt);
                 list[i].Y += (list[i].Vy * dt);
-            }
-            if (list[0].Vx == 0 && list[0].Vy == 0)//если челы не двигаются по иксу, то считай их нет
-            {
-                saveData.countPeoppleInput = 0;
             }
 
         }

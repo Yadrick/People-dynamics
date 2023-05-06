@@ -14,11 +14,12 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 80;
+        public int countPeople = 60;                            //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
         public int countPeopleInput = 10;
+        public int countVagons = 2;                             //число вагонов поезда (всего 2 поезда => 4 вагона)
 
-        public List<People> peoples = new List<People>();//будет содержать всех имеющихся людей 
-        public List<People> peoplesInput = new List<People>();//будет содержать всех заходящих людей 
+        public List<People> peoples = new List<People>();       //будет содержать всех имеющихся людей 
+        public List<People> peoplesInput = new List<People>();  //будет содержать всех заходящих людей 
 
 
         public Barrier metro = new Barrier();//модель местности возле эскалатора на подъеме из метро "Политехническая"
@@ -91,51 +92,66 @@ namespace LearnOpenTK_2
 
         }
 
-        public void CreatePeopleMetroStatic()//создаст людей и запихнет в массив (спавнятся в квадрате  minValue:maxValue)
+        public void CreatePeopleMetroStatic(int countVagon)//создаст людей и запихнет в массив (спавнятся в квадрате  minValue:maxValue)
         {
             Random rnd = new Random();
             int halfCountPeople = countPeople / 2;
             int secondHalfCountPeople = countPeople - halfCountPeople;
-            int[] massiv = new int[10]; // допустим, всего 10 выходов будет возможными. в rnd.next(a,b) определяется количество выходов
+
+            int[][] massiv2 = new int[countVagon][];//всего countVagon вагонов, по 4 выхода(дальше инициализирую)
+
+            //инициализирую каждому вагону метро по 4 выхода
+            for (int i = 0; i < massiv2.Length; i++)
+            {
+                massiv2[i] = new int[4];
+            }
+
 
             int a = 0;//для рандома
 
-            //добавляю людей, вышедших из поезда снизу
-            for (int i = 0; i < halfCountPeople; i++)
+            //для каждого вагона метро:
+            for (int j = 0; j < massiv2.Length; j++)
             {
-                // a - условно отвечает за номер двери при выходе из выгона
-                a = rnd.Next(0, 4);
-                //+ r*rnd.Next(0,2) - смещение на r вправо
-                double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
+                //добавляю людей, вышедших из поезда снизу
+                for (int i = 0; i < halfCountPeople; i++)
+                {
+                    // a - условно отвечает за номер двери при выходе из выгона
+                    a = rnd.Next(0, 4);
+                    //+ r*rnd.Next(0,2) - смещение на r вправо
+                    double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (21 * 2 * r)) /scale;
 
-                massiv[a]++;
+                    //massiv[a]++;
+                    massiv2[j][a]++;
 
-                double y = -(9 + (massiv[a] - 1)) * 2 * r / scale;
+                    //double y = -(9 + (massiv[a] - 1)) * 2 * r / scale;
+                    double y = -(9 + (massiv2[j][a] - 1)) * 2 * r / scale;
+
+                    peoples.Add(new People(x, y));
+                }
+
+                //обнуляю массив, чтобы добавить людей, вышедших из поезда сверху
+                for (int i = 0; i < massiv2[j].Length; i++)
+                {
+                    massiv2[j][i] = 0;
+                }
+
+                for (int i = 0; i < secondHalfCountPeople; i++)
+                {
+                    a = rnd.Next(0, 4);
+                    //+ Math.Pow(-1, rnd.Next(1, 2))*r*rnd.Next(0,2) - смещение на r вправо-влево
+                    double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2) - j * (21 * 2 * r)) / scale;
+
+                    //massiv[a]++;
+                    massiv2[j][a]++;
 
 
-                peoples.Add(new People(x, y));
+                    //double y = (9 + (massiv[a] - 1)) * 2 * r / scale;
+                    double y = (9 + (massiv2[j][a] - 1)) * 2 * r / scale;
+
+                    peoples.Add(new People(x, y));
+                }
             }
-
-            //обнуляю массив, чтобы добавить людей, вышедших из поезда сверзу
-            for (int i = 0; i < massiv.Length; i++)
-            {
-                massiv[i] = 0;
-            }
-
-            for (int i = 0; i < secondHalfCountPeople; i++)
-            {
-                a = rnd.Next(0, 4);
-                //+ Math.Pow(-1, rnd.Next(1, 2))*r*rnd.Next(0,2) - смещение на r вправо-влево
-                double x = (a * ((-5 * 2 * r)) - 4 * 2 * r + Math.Pow(-1, rnd.Next(1, 2)) * r * rnd.Next(0, 2)) / scale;
-
-                massiv[a]++;
-
-
-                double y = (9 + (massiv[a] - 1)) * 2 * r / scale;
-
-                peoples.Add(new People(x, y));
-            }
-
+           
         }
 
 
@@ -310,7 +326,7 @@ namespace LearnOpenTK_2
         protected override void OnLoad()
         {
             //prog.CreatePeopleMetro();
-            prog.CreatePeopleMetroStatic();
+            prog.CreatePeopleMetroStatic(prog.countVagons);//в параметре количество вагонов
             prog.LoadingPeopleInsideMetro(0);//-0.5);
             prog.CreateMetro(0); // если передать 0, то будет два подъема, если 1, то будет 2 спуска
             
@@ -342,7 +358,7 @@ namespace LearnOpenTK_2
             dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
             
             //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Displacement(prog.peoples, 0); // цифра отвечает тому же, что и в Force
+            dynamics.Displacement(prog.peoples, 0, prog.countVagons); // цифра отвечает тому же, что и в Force
 
             //для входящего потока
             dynamics.DisplacementInput(prog.peoplesInput);

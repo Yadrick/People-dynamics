@@ -9,12 +9,12 @@ namespace Dynamics_peoples
 {
     public class SaveData
     {
-        public int countPeoppleInput { get; set; }      //кол-во входящих в метро людей
+        public int countVagon { get; set; }             //кол-во вагонов в поезде
         public int countPeoppleOutput { get; set; }     // кол-во выходящих людей
         public double Velocity { get; set; }            // скорость людей
         public int countEscalator { get; set; }         // кол-во эскалаторов на подьем
         public double timeFirstOut { get; set; }        // время выхода на эскалатор первого человека
-        public double timeHalfOut { get; set; }         // время выхода половины всех людей
+        public double timeOut { get; set; }             // время выхода всех людей
         public double maxPressure { get; set; }         // максимальное давление
         public int countSufferer { get; set; }          // число пострадавших
         public string isolation = "_______________________________________________________________";// чтобы разграничивать эксперементы в файле
@@ -35,7 +35,10 @@ namespace Dynamics_peoples
                     {
                         if (reader.Peek() != -1)
                         {
-                            Console.WriteLine("ne pysto");
+                        }
+                        else
+                        {
+                            flag2 = true;
                         }
                     }
                 }
@@ -49,10 +52,10 @@ namespace Dynamics_peoples
    
                     if (flag2)
                     {
-                        writer.WriteLine("людей_заходят;людей_выходят;скорость;кол-во_эскалаторов_на_подъем;время_выхода_первого_человека;время_выхода_половины_всех_людей;максимальное_давление_оказываемое_на_человека;число_пострадавших");
+                        writer.WriteLine("людей_выходят;скорость;кол-во_вагонов;кол-во_эскалаторов_на_подъем;время_выхода_первого_человека;время_выхода_всех_людей;delta_t;максимальное_давление_оказываемое_на_человека;число_пострадавших");
                     }
 
-                    writer.WriteLine($"{countPeoppleInput};{countPeoppleOutput};{Velocity};{countEscalator};{timeFirstOut};{timeHalfOut};{maxPressure};{countSufferer}");
+                    writer.WriteLine($"{countPeoppleOutput};{Velocity};{countVagon};{countEscalator};{timeFirstOut};{timeOut};{timeOut-timeFirstOut};{maxPressure};{countSufferer}");
 
 
                     Console.WriteLine("записал");
