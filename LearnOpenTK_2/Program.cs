@@ -16,7 +16,8 @@ namespace LearnOpenTK_2
         public double h = 1000;
         public int countPeople = 100;                            //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
         public int countPeopleInput = 10;
-        public int countVagons = 2;                             //число вагонов поезда (всего 2 поезда => 4 вагона)
+        public int countVagons = 1;                             //число вагонов поезда (всего 2 поезда => 4 вагона)
+        public int count_train_coming = 4;
 
         public List<People> peoples = new List<People>();       //будет содержать всех имеющихся людей 
         public List<People> peoplesInput = new List<People>();  //будет содержать всех заходящих людей 
@@ -311,7 +312,10 @@ namespace LearnOpenTK_2
     public class Game : GameWindow
     {
         private double frameTime = 0;
-        public double timeWorking = 0;//время работы программы
+        public double timeWorking = 0;              //время работы программы 
+        public double time_moving = 0;              //время работы программы 
+        public double timePreviousTrain = 0;        //время, прошедшее с предыдущего поезда !!!!! Задаю в Onload
+        public double dt = 0.015;
         private int fps = 0;
         Program prog = new Program();
         DynamicPeoples dynamics = new DynamicPeoples();
@@ -319,12 +323,14 @@ namespace LearnOpenTK_2
 
         public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
-            VSync = VSyncMode.On; // ограничение на количество фпс: такое, сколько экран может показать (Update метод вызывается меньше раз)
+            VSync = VSyncMode.Off; // ограничение на количество фпс: если on - то это такое, сколько экран может показать (Update метод вызывается меньше раз)
         }
 
         //инициализация ресурсов
         protected override void OnLoad()
         {
+            // множитель варьировал так: 0.9;0.8;0.7;0.6;0.5;0.4;0.35
+            timePreviousTrain = prog.countVagons * 37050 * 0.35 + 20400; // время прошедшее с предыдущего поезда * 1000
             //prog.CreatePeopleMetro();
             prog.CreatePeopleMetroStatic(prog.countVagons);//в параметре количество вагонов
             prog.LoadingPeopleInsideMetro(0);//-0.5);
@@ -345,6 +351,8 @@ namespace LearnOpenTK_2
             base.OnResize(e);
         }
 
+
+        int count_train = 0;
         //проверка на нажатие клавиш, изменение положения объектов в пространстве, мат операции
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
@@ -352,16 +360,41 @@ namespace LearnOpenTK_2
             timeWorking += args.Time;//время работы программы
             fps++;
 
-            //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
-            dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro/prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, prog.metro);
-            dynamics.WallContact(prog.peoples, prog.metro);
-            dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
-            
-            //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-            dynamics.Displacement(prog.peoples, 0, prog.countVagons); // цифра отвечает тому же, что и в Force
+            //по истечению какого-то промежутка времени буду запускать новый поезд
 
-            //для входящего потока
-            dynamics.DisplacementInput(prog.peoplesInput);
+            time_moving += dt;
+
+            // пояснение к условию (про timePreviousTrain): время выхода первого человека у всех примерно 20.4(20400) секунд. С увеличением числа вагонов время выхода
+            // всех людей увеличивается примерно на 37 секунд (37000)
+            //Console.WriteLine($"{time_moving}");
+            if (((int)(time_moving * 1000) == timePreviousTrain || (int)(time_moving * 1000) == timePreviousTrain + dt*1000/2) && count_train < prog.count_train_coming)
+            {
+                time_moving = 0;
+                prog.CreatePeopleMetroStatic(prog.countVagons);//в параметре количество вагонов
+                count_train++;
+                time_moving += dt;
+            }
+
+
+            try
+            {
+                //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
+                dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, prog.metro);
+                dynamics.WallContact(prog.peoples, prog.metro);
+                dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
+
+                //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
+                dynamics.Displacement(prog.peoples, 0, prog.countVagons, prog.count_train_coming, timePreviousTrain/1000); // цифра отвечает тому же, что и в Force
+
+                //для входящего потока
+                dynamics.DisplacementInput(prog.peoplesInput);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            
 
             if (frameTime >= 1)//чтобк каждую секунду выводить коилчество кадров
             {
@@ -378,6 +411,9 @@ namespace LearnOpenTK_2
         //а тут уже отрисовка кадров
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+            
+
+
             GL.Clear(ClearBufferMask.ColorBufferBit);//очистка формы ДАННЫМ выше(в OnLoad) цветом 
 
             DrawPoint(prog.peoples);//рисуются чуваки 
@@ -418,7 +454,8 @@ namespace LearnOpenTK_2
             // => размеры комнаты можно сделать 2 * (0.9/w и 0.9/h), где w и h - желаемые размеры - сделано что-то подобное через scale
         }
 
-
+        double max_force_dopusk = 180;
+        double vecctor_force = 100;
         //рисует человечка-точку
         private void DrawPoint(List<People> list)
         {
@@ -435,16 +472,21 @@ namespace LearnOpenTK_2
                 
                 x[j] = arrat[j].X;
                 y[j] = arrat[j].Y;
-                
-                GL.Begin(PrimitiveType.TriangleFan);
-                GL.Color3(Math.Abs(arrat[j].Pressure), 0.0, 0.0);
-                for (int i = 0; i <= cnt; i++)
+
+                if (list[j].X >= -1.1/prog.scale && list[j].X <= 1.1 / prog.scale && list[j].Y >= -1.1 / prog.scale && list[j].Y <= 1.1 / prog.scale)
                 {
-                    x[j] += prog.r * Math.Sin(da * i);
-                    y[j] += prog.r * Math.Cos(da * i);
-                    GL.Vertex2(x[j], y[j]);
+                    GL.Begin(PrimitiveType.TriangleFan);
+                    GL.Color3(Math.Abs(arrat[j].BeforeForce - vecctor_force) / max_force_dopusk, 0.0, 0.0);
+                    for (int i = 0; i <= cnt; i++)
+                    {
+                        x[j] += prog.r * Math.Sin(da * i);
+                        y[j] += prog.r * Math.Cos(da * i);
+                        GL.Vertex2(x[j], y[j]);
+                    }
+                    GL.End();
                 }
-                GL.End();
+
+                
             }   
         }
 
