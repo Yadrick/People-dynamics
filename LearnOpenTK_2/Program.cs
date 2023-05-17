@@ -14,10 +14,10 @@ namespace LearnOpenTK_2
     {
         public double w = 1400;
         public double h = 1000;
-        public int countPeople = 100;                            //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
+        public int countPeople = 60;                           //число людей в 2-х вагонах (в 1-м сверху и в 1-м вагоне снизу)
         public int countPeopleInput = 10;
-        public int countVagons = 1;                             //число вагонов поезда (всего 2 поезда => 4 вагона)
-        public int count_train_coming = 4;
+        public int countVagons = 1;                             //число вагонов поезда (всего 2 поезда => 2 * countVagons вагона)
+        public int count_train_coming = 0;                      //ставлю = 4, чтобы в сумме с первым было 5
 
         public List<People> peoples = new List<People>();       //будет содержать всех имеющихся людей 
         public List<People> peoplesInput = new List<People>();  //будет содержать всех заходящих людей 
@@ -255,7 +255,7 @@ namespace LearnOpenTK_2
             ////////////////////////////////////////////////////////////////////////////
             ///Добавляю точки-барьеры на стыках линий
             double radiusBar = 0.01;
-            double[] proba0 = { stena15[2] - radiusBar / scale, stena15[1], radiusBar };
+            double[] proba0 = { stena15[2] - radiusBar / scale, stena15[1], radiusBar };//начало наклонной
             double[] proba1 = { stena15[0] - radiusBar/scale, stena15[1], radiusBar };
             double[] proba2 = { stena3[0] - radiusBar / scale, stena3[3], radiusBar };
             double[] proba3 = { stena3[0] - radiusBar / scale, stena3[1], radiusBar };
@@ -282,9 +282,82 @@ namespace LearnOpenTK_2
             metro.circles.Add(proba9);
             metro.circles.Add(proba10);
             metro.circles.Add(proba11);
+
+            ////////////////////////////////////////////////////////////////////////////
+            ///Добавляю точки-барьеры на наклонной линии =)
+
+            double m = -((y_top - 8 * (r) - 6.45 * 2 * r)) / ((x_right + 7 * 2 * r) - (x_right + 4 * 2 * r));
+
+            double[] proba00 = new double[] { stena15[2] + 0.5 * radiusBar / scale, stena15[1] + m * 0.5 * radiusBar / scale, radiusBar };
+            double[] proba01 = new double[] { stena15[2] + 2 * radiusBar / scale, stena15[1] + m * 2 * radiusBar / scale, radiusBar };
+            double[] proba02 = { stena15[2] + 3.5 * radiusBar / scale, stena15[1] + m * 3.5 * radiusBar / scale, radiusBar };
+            double[] proba03 = { stena15[2] + 5 * radiusBar / scale, stena15[1] + m * 5 * radiusBar / scale, radiusBar };
+            double[] proba04 = { stena15[2] + 6.5 * radiusBar / scale, stena15[1] + m * 6.5 * radiusBar / scale, radiusBar };
+            double[] proba05 = { stena15[2] + 8 * radiusBar / scale, stena15[1] + m * 8 * radiusBar / scale, radiusBar };
+            double[] proba06 = { stena15[2] + 9.5 * radiusBar / scale, stena15[1] + m * 9.5 * radiusBar / scale, radiusBar };
+            double[] proba07 = { stena15[2] + 11 * radiusBar / scale, stena15[1] + m * 11 * radiusBar / scale, radiusBar };
+            double[] proba08 = { stena15[2] + 12.5 * radiusBar / scale, stena15[1] + m * 12.5 * radiusBar / scale, radiusBar };
+            double[] proba09 = { stena15[2] + 14 * radiusBar / scale, stena15[1] + m * 14 * radiusBar / scale, radiusBar };
+            double[] proba010 = { stena15[2] + 15.5 * radiusBar / scale, stena15[1] + m * 15.5 * radiusBar / scale, radiusBar };
+            double[] proba011 = { stena15[2] + 17 * radiusBar / scale, stena15[1] + m * 17 * radiusBar / scale, radiusBar };
+            double[] proba012 = { stena15[2] + 18.5 * radiusBar / scale, stena15[1] + m * 18.5 * radiusBar / scale, radiusBar };
+            double[] proba013 = { stena15[2] + 20 * radiusBar / scale, stena15[1] + m * 20 * radiusBar / scale, radiusBar };
+            double[] proba014 = { stena15[2] + 21.5 * radiusBar / scale, stena15[1] + m * 21.5 * radiusBar / scale, radiusBar };
+            double[] proba015 = { stena15[2] + 23 * radiusBar / scale, stena15[1] + m * 23 * radiusBar / scale, radiusBar };
+            double[] proba016 = { stena15[2] + 24.5 * radiusBar / scale, stena15[1] + m * 24.5 * radiusBar / scale, radiusBar };
+            double[] proba017 = { stena15[2] + 26 * radiusBar / scale, stena15[1] + m * 26 * radiusBar / scale, radiusBar };
+            double[] proba018 = { stena15[2] + 27.5 * radiusBar / scale, stena15[1] + m * 27.5 * radiusBar / scale, radiusBar };
+            double[] proba019 = { stena15[2] + 29 * radiusBar / scale, stena15[1] + m * 29 * radiusBar / scale, radiusBar };
+
+            if (key == 0) // один подъем
+            {
+                m = -m;
+                proba00 = new double[]{ stena15[2] + 0.5 * radiusBar / scale, stena15[1] + m * 0.5 * radiusBar / scale, radiusBar };
+                proba01 = new double[]{ stena15[2] + 2 * radiusBar / scale, stena15[1] + m * 2 * radiusBar / scale, radiusBar };
+                proba02 = new double[] { stena15[2] + 3.5 * radiusBar / scale, stena15[1] + m * 3.5 * radiusBar / scale, radiusBar };
+                proba03 = new double[] { stena15[2] + 5 * radiusBar / scale, stena15[1] + m * 5 * radiusBar / scale, radiusBar };
+                proba04 = new double[] { stena15[2] + 6.5 * radiusBar / scale, stena15[1] + m * 6.5 * radiusBar / scale, radiusBar };
+                proba05 = new double[] { stena15[2] + 8 * radiusBar / scale, stena15[1] + m * 8 * radiusBar / scale, radiusBar };
+                proba06 = new double[] { stena15[2] + 9.5 * radiusBar / scale, stena15[1] + m * 9.5 * radiusBar / scale, radiusBar };
+                proba07 = new double[] { stena15[2] + 11 * radiusBar / scale, stena15[1] + m * 11 * radiusBar / scale, radiusBar };
+                proba08 = new double[] { stena15[2] + 12.5 * radiusBar / scale, stena15[1] + m * 12.5 * radiusBar / scale, radiusBar };
+                proba09 = new double[] { stena15[2] + 14 * radiusBar / scale, stena15[1] + m * 14 * radiusBar / scale, radiusBar };
+                proba010 = new double[] { stena15[2] + 15.5 * radiusBar / scale, stena15[1] + m * 15.5 * radiusBar / scale, radiusBar };
+                proba011 = new double[] { stena15[2] + 17 * radiusBar / scale, stena15[1] + m * 17 * radiusBar / scale, radiusBar };
+                proba012 = new double[] { stena15[2] + 18.5 * radiusBar / scale, stena15[1] + m * 18.5 * radiusBar / scale, radiusBar };
+                proba013 = new double[] { stena15[2] + 20 * radiusBar / scale, stena15[1] + m * 20 * radiusBar / scale, radiusBar };
+                proba014 = new double[] { stena15[2] + 21.5 * radiusBar / scale, stena15[1] + m * 21.5 * radiusBar / scale, radiusBar };
+                proba015 = new double[] { stena15[2] + 23 * radiusBar / scale, stena15[1] + m * 23 * radiusBar / scale, radiusBar };
+                proba016 = new double[] { stena15[2] + 24.5 * radiusBar / scale, stena15[1] + m * 24.5 * radiusBar / scale, radiusBar };
+                proba017 = new double[] { stena15[2] + 26 * radiusBar / scale, stena15[1] + m * 26 * radiusBar / scale, radiusBar };
+                proba018 = new double[] { stena15[2] + 27.5 * radiusBar / scale, stena15[1] + m * 27.5 * radiusBar / scale, radiusBar };
+                proba019 = new double[] { stena15[2] + 29 * radiusBar / scale, stena15[1] + m * 29 * radiusBar / scale, radiusBar };
+            }
+
+            metro.circles.Add(proba00);
+            metro.circles.Add(proba01);
+            metro.circles.Add(proba02);
+            metro.circles.Add(proba03);
+            metro.circles.Add(proba04);
+            metro.circles.Add(proba05);
+            metro.circles.Add(proba06);
+            metro.circles.Add(proba07);
+            metro.circles.Add(proba08);
+            metro.circles.Add(proba09);
+            metro.circles.Add(proba010);
+            metro.circles.Add(proba011);
+            metro.circles.Add(proba012);
+            metro.circles.Add(proba013);
+            metro.circles.Add(proba014);
+            metro.circles.Add(proba015);
+            metro.circles.Add(proba016);
+            metro.circles.Add(proba017);
+            metro.circles.Add(proba018);
+            metro.circles.Add(proba019);
+
         }
 
-       
+
 
         static void Main(string[] args)
         {
@@ -323,18 +396,21 @@ namespace LearnOpenTK_2
 
         public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
-            VSync = VSyncMode.Off; // ограничение на количество фпс: если on - то это такое, сколько экран может показать (Update метод вызывается меньше раз)
+            VSync = VSyncMode.On; // ограничение на количество фпс: если on - то это такое, сколько экран может показать (Update метод вызывается меньше раз)
         }
 
         //инициализация ресурсов
         protected override void OnLoad()
         {
-            // множитель варьировал так: 0.9;0.8;0.7;0.6;0.5;0.4;0.35
-            timePreviousTrain = prog.countVagons * 37050 * 0.35 + 20400; // время прошедшее с предыдущего поезда * 1000
+            // множитель варьировал так: 0.9;0.8;0.7;0.6;0.5;0.4;0.35 - критическая
+            // для 2-х вагонов множитель варьировал так: 0.9;0.8;0.7;0.65;0.645;0.63 - критич
+            // для 3-х вагонов множитель варьировал так: 0.8,0.745,0.755
+            timePreviousTrain = prog.countVagons * 37.05 * 0.81 + 20.4; // время прошедшее с предыдущего поезда 
+            //Console.WriteLine((prog.countVagons * 37.05 * 0.75 + 20.4 ));
             //prog.CreatePeopleMetro();
             prog.CreatePeopleMetroStatic(prog.countVagons);//в параметре количество вагонов
             prog.LoadingPeopleInsideMetro(0);//-0.5);
-            prog.CreateMetro(0); // если передать 0, то будет два подъема, если 1, то будет 2 спуска
+            prog.CreateMetro(1); // если передать 0, то будет два подъема, если 1, то будет 2 спуска
             
 
             //dynamics.Displacement(prog.peoples); // хз зачем он тут был, пока что закомментил, но помоему можно удалить
@@ -366,8 +442,9 @@ namespace LearnOpenTK_2
 
             // пояснение к условию (про timePreviousTrain): время выхода первого человека у всех примерно 20.4(20400) секунд. С увеличением числа вагонов время выхода
             // всех людей увеличивается примерно на 37 секунд (37000)
-            //Console.WriteLine($"{time_moving}");
-            if (((int)(time_moving * 1000) == timePreviousTrain || (int)(time_moving * 1000) == timePreviousTrain + dt*1000/2) && count_train < prog.count_train_coming)
+            //Console.WriteLine($"{(int)(time_moving * 100)}");
+
+            if (((int)(time_moving * 100) == (int)(timePreviousTrain * 100) || (int)(time_moving * 100) == timePreviousTrain + dt*100/2) && count_train < prog.count_train_coming)
             {
                 time_moving = 0;
                 prog.CreatePeopleMetroStatic(prog.countVagons);//в параметре количество вагонов
@@ -379,12 +456,12 @@ namespace LearnOpenTK_2
             try
             {
                 //первая цифра в Force отвечает за кол-во эскалаторов на подъем/спуск
-                dynamics.Force(0, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, prog.metro);
+                dynamics.Force(1, prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, prog.metro);
                 dynamics.WallContact(prog.peoples, prog.metro);
                 dynamics.Velocity(prog.peoples, prog.peoplesInput, prog.xxMetro / prog.scale, prog.yyMetro / prog.scale, prog.xx1Metro / prog.scale, prog.yy1Metro / prog.scale, prog.xx2Metro / prog.scale, prog.yy2Metro / prog.scale, (prog.r) / prog.scale);
 
                 //dynamics.ContactCheckMetro(prog.peoples, prog.metro, prog.x_right / prog.scale, prog.yy / prog.scale);
-                dynamics.Displacement(prog.peoples, 0, prog.countVagons, prog.count_train_coming, timePreviousTrain/1000); // цифра отвечает тому же, что и в Force
+                dynamics.Displacement(prog.peoples, 1, prog.countVagons, prog.count_train_coming, timePreviousTrain); // цифра отвечает тому же, что и в Force
 
                 //для входящего потока
                 dynamics.DisplacementInput(prog.peoplesInput);
@@ -490,7 +567,7 @@ namespace LearnOpenTK_2
             }   
         }
 
-        //рисует человечка-точку
+        //рисует барьер-точку
         private void DrawPointBarrier(List<double[]> circles)
         {
             int cnt = 12;//количество граней для "круга"

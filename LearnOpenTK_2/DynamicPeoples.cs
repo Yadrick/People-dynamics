@@ -8,6 +8,7 @@ namespace LearnOpenTK_2
     {
         public SaveData saveData = new SaveData();
 
+        public LineIntersection lineInter = new LineIntersection();
 
         public double dt = 0.015;
         double time = 0;//буду здесь фиксировать прошедшее время
@@ -78,51 +79,8 @@ namespace LearnOpenTK_2
                 list[i].Pressure = 0;
             }
 
-            //for (int i = 0; i < listInput.Count; i++)
-            //{
-            //    listInput[i].Fx = 0;
-            //    listInput[i].Fy = 0;
-            //    listInput[i].Pressure = 0;
-            //}
 
             double s = 0;
-
-            //взаимодействие i-го входящего чела с остальными ВХОДЯЩИМИ челами
-            //for (int i = 0; i < listInput.Count-1; i++)
-            //{
-            //    List<People> list2 = new List<People>();//нужно для рассчитывания площади локальной
-
-            //    square = 0;
-            //    f_upr = 0;
-            //    force_Lennard = 0;
-            //    rasstoyanie = Math.Sqrt(Math.Pow(xx - (listInput[i].X + r / scale), 2) + Math.Pow(yy - listInput[i].Y, 2));
-
-            //    for (int j = i+1; j < listInput.Count; j++)
-            //    {
-            //        distance_peop = Math.Sqrt(Math.Pow((listInput[j].X - listInput[i].X), 2) + Math.Pow((listInput[j].Y - listInput[i].Y), 2));
-            //        pr_x = (listInput[i].X - listInput[j].X) / (distance_peop);
-            //        pr_y = (listInput[i].Y - listInput[j].Y) / (distance_peop);
-
-            //        s = 1.95 * (r / scale) / distance_peop; //
-            //        potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
-            //        force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
-
-            //        if (potential_Lennard >= 0)
-            //        {
-            //            listInput[i].Fx += (force_Lennard) * pr_x;
-            //            listInput[i].Fy += (force_Lennard) * pr_y;
-            //            listInput[j].Fx -= (force_Lennard) * pr_x;
-            //            listInput[j].Fy -= (force_Lennard) * pr_y;
-
-            //            list2.Add(list[j]);
-
-            //            square = 1;
-
-            //            listInput[i].Pressure += (-distance_peop) * Math.Sqrt(Math.Pow(listInput[i].Fx, 2) + Math.Pow(listInput[i].Fy, 2)) / (4 * square);
-            //            listInput[j].Pressure -= listInput[i].Pressure;
-            //        }
-            //    }
-            //}
 
             // считаю силы взаимодействия между i-тым челом и всеми остальными
             for (int i = 0; i < list.Count - 1; i++)
@@ -146,14 +104,9 @@ namespace LearnOpenTK_2
                     force_Lennard =  12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a,2) ;//на вектор взаимодействия умножается ниже
 
                     
-                    //if (distance_peop <= 4*r)//сила упругости возникает только при контакте
-                    //{
-                    //    f_upr = k * (4 * r - distance_peop);
-                    //}
 
                     if (potential_Lennard >= 0)
                     {
-                        //Console.WriteLine($"{ (force_Lennard) * pr_x} && {(force_Lennard) * pr_y}");
                         if (force_Lennard > 250)
                         {         
                             force_Lennard = 250;
@@ -173,51 +126,8 @@ namespace LearnOpenTK_2
                         list[j].Pressure -= list[i].Pressure;
                     }
 
-                    //когда i-го человека сравнили со всеми остальными j-ми, запсукается расчет площади?
-                    //if (j == list_count - 1)
-                    //{
-                    //    square = Square(list2, list[i]);
-                    //    if (square == 0)
-                    //    {
-                    //        continue;
-                    //    }
-                    //    square = 1;
-                    //    list[i].Pressure = (-distance_peop) * Math.Sqrt(Math.Pow(list[i].Fx, 2) + Math.Pow(list[i].Fy, 2)) / (4 * square);
-                    //    list[j].Pressure = list[i].Pressure;
-                    //}
                 }
 
-                //смотрю контакт i-го чела со входящими людьми
-                //for (int j = 0; j < listInput.Count; j++)
-                //{
-                //    distance_peop = Math.Sqrt(Math.Pow((listInput[j].X - list[i].X), 2) + Math.Pow((listInput[j].Y - list[i].Y), 2));
-                //    pr_x = (list[i].X - listInput[j].X) / (distance_peop);
-                //    pr_y = (list[i].Y - listInput[j].Y) / (distance_peop);
-
-                //    s = 1.95 * (r / scale) / distance_peop; //
-                //    potential_Lennard = d * (Math.Pow(s, 12) - Math.Pow(s, 6));
-                //    force_Lennard = 12 * d * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
-
-                //    if (potential_Lennard >= 0)
-                //    {
-                //        list[i].Fx += (force_Lennard) * pr_x;
-                //        list[i].Fy += (force_Lennard) * pr_y;
-                //        listInput[j].Fx -= (force_Lennard) * pr_x;
-                //        listInput[j].Fy -= (force_Lennard) * pr_y;
-
-                //        square = 1;
-
-                //        list[i].Pressure += (-distance_peop) * Math.Sqrt(Math.Pow(list[i].Fx, 2) + Math.Pow(list[i].Fy, 2)) / (4 * square);
-                //        listInput[j].Pressure -= list[i].Pressure;
-                //    }
-
-                //}
-
-                //double eps = 0.001;
-
-
-
-                //задается вектор силы в точку выхода i-му челу
 
                 //спецаильная првоерка для последнего человека
                 if ((list[list.Count - 1].X + r / scale) >= xx - r / scale && list[list.Count - 1].Y < yy + 4 * r / scale && list[list.Count - 1].Y > yy - 3 * r / scale && !list[list.Count - 1].Position)
@@ -248,7 +158,7 @@ namespace LearnOpenTK_2
                             //пробую уменьшить движущую силу людей, который встали в пробку
                             if (list[i].BeforeForce >= 150 || force_Lennard >= 150)
                             {
-                                f_vector = 5;
+                                f_vector = 2;
                             }
                             else
                             {
@@ -268,7 +178,7 @@ namespace LearnOpenTK_2
                             //пробую уменьшить движущую силу людей, который встали в пробку
                             if (list[i].BeforeForce >= 150 || force_Lennard >= 150)
                             {
-                                f_vector = 5; 
+                                f_vector = 2; 
                             }
                             else
                             {
@@ -288,7 +198,7 @@ namespace LearnOpenTK_2
                         //пробую уменьшить движущую силу людей, который встали в пробку
                         if (list[i].BeforeForce >= 150 || force_Lennard >= 150)
                         {
-                            f_vector = 5; 
+                            f_vector = 2; 
                         }
                         else
                         {
@@ -306,7 +216,7 @@ namespace LearnOpenTK_2
                         //пробую уменьшить движущую силу людей, который встали в пробку
                         if (list[i].BeforeForce >= 150 || force_Lennard >= 150)
                         {
-                            f_vector = 5;
+                            f_vector = 2;
                         }
                         else
                         {
@@ -323,7 +233,7 @@ namespace LearnOpenTK_2
                     //пробую уменьшить движущую силу людей, который встали в пробку
                     if (list[i].BeforeForce >= 150 || force_Lennard >= 150)
                     {
-                        f_vector = 5;
+                        f_vector = 2;
                     }
                     else
                     {
@@ -344,42 +254,6 @@ namespace LearnOpenTK_2
 
            
 
-            //буду здесь добавлять входящим людям силу притяжения в точку
-            //for (int i = 0; i < listInput.Count; i++)
-            //{
-            //    Random rnd = new Random();
-            //    if (listInput[i].X <= xx1)
-            //    {
-            //        //если прошшел эскалатор X <= xx1, а потом если ещё не прошел координату X >= xx + r/scale
-            //        if (listInput[i].X >= xx + r/scale)
-            //        {
-            //            rasstoyanie2 = Math.Sqrt(Math.Pow(xx - (listInput[i].X + r / scale), 2) + Math.Pow(-yy - listInput[i].Y, 2));
-
-            //            listInput[i].Fx += f_vector * (xx - (listInput[i].X + r / scale)) / rasstoyanie2;
-            //            listInput[i].Fy += f_vector * (-yy - listInput[i].Y) / rasstoyanie2;
-            //            continue;
-            //        }
-            //        else
-            //        {
-            //            // пусть движутся в x = -0.9/scale - 8 * r / scale, а y = +-11.5*r/scale
-            //            x_nado = -0.9 / scale - 8 * r / scale;
-            //            y_nado = Math.Pow(-1, rnd.Next(1, 3)) * 11.5 * r / scale;
-
-            //            //massiv - впервый раз буду записывать сюда данные о точке притяжения вошедших людей - их две
-            //            if (massiv[i] == 0)
-            //            {
-            //                massiv[i] = y_nado;
-            //            }
-            //            rasstoyanie2 = Math.Sqrt(Math.Pow(x_nado - (listInput[i].X + r / scale), 2) + Math.Pow(massiv[i] - listInput[i].Y, 2));
-
-            //            listInput[i].Fx += f_vector * (x_nado - (listInput[i].X + r / scale)) / rasstoyanie2;
-            //            listInput[i].Fy += f_vector * (massiv[i] - listInput[i].Y) / rasstoyanie2;
-            //            continue;
-            //        }
-            //    }
-                
-            //}
-
 
             //указания для последнего человечка выходящего из метро
             if (!list[list.Count - 1].Position)
@@ -390,7 +264,7 @@ namespace LearnOpenTK_2
                 //пробую уменьшить движущую силу людей, который встали в пробку
                 if (list[list.Count - 1].BeforeForce >= 150 || force_Lennard >= 150)
                 {
-                    f_vector = 5;
+                    f_vector = 2;
                 }
                 else
                 {
@@ -415,7 +289,7 @@ namespace LearnOpenTK_2
                         //пробую уменьшить движущую силу людей, который встали в пробку
                         if (list[list.Count - 1].BeforeForce >= 150 || force_Lennard >= 150)
                         {
-                            f_vector = 5;
+                            f_vector = 2;
                         }
                         else
                         {
@@ -434,7 +308,7 @@ namespace LearnOpenTK_2
                         //пробую уменьшить движущую силу людей, который встали в пробку
                         if (list[list.Count - 1].BeforeForce >= 150 || force_Lennard >= 150)
                         {
-                            f_vector = 5;
+                            f_vector = 2;
                         }
                         else
                         {
@@ -454,7 +328,7 @@ namespace LearnOpenTK_2
                     //пробую уменьшить движущую силу людей, который встали в пробку
                     if (list[list.Count - 1].BeforeForce >= 150 || force_Lennard >= 150)
                     {
-                        f_vector = 5;
+                        f_vector = 2;
                     }
                     else
                     {
@@ -472,7 +346,7 @@ namespace LearnOpenTK_2
                     //пробую уменьшить движущую силу людей, который встали в пробку
                     if (list[list.Count - 1].BeforeForce >= 150 || force_Lennard >= 150)
                     {
-                        f_vector = 5;
+                        f_vector = 2;
                         
                     }
                     else
@@ -507,6 +381,7 @@ namespace LearnOpenTK_2
 
         }
 
+        double eps = 0.02;
         public void WallContact(List<People> list, Barrier barriers)
         {
             double s = 0;
@@ -525,7 +400,7 @@ namespace LearnOpenTK_2
                     pr_x = (list[i].X - barriers.circles[k][0]) / (distance_peop);
                     pr_y = (list[i].Y - barriers.circles[k][1]) / (distance_peop);
 
-                    s = 1.9 * (r / scale) / distance_peop; //правильно будет 2 * ...
+                    s = 1.8 * (r / scale) / distance_peop; //правильно будет 2 * ...
                     potential_Lennard = d2 * (Math.Pow(s, 12) - Math.Pow(s, 6));
                     force_Lennard = 12 * d2 * (Math.Pow(s, 14) - Math.Pow(s, 8)) / Math.Pow(a, 2);//на вектор взаимодействия умножается ниже
 
@@ -545,7 +420,7 @@ namespace LearnOpenTK_2
                 for (int j = 0; j < barriers.coordPair.Count; j++)
                 {
                     // ПОКА ЧТО смотрю контакт только после X=0
-                    if (list[i].X > -r/scale)
+                    if ((list[i].X + r / scale) + r / scale >= 0)
                     {
                         if (barriers.coordPair[j][0] == barriers.coordPair[j][2])// иксы точек равны, значит вертикальная прямая
                         {
@@ -556,8 +431,8 @@ namespace LearnOpenTK_2
                             if ((list[i].Y >= barriers.coordPair[j][1] && list[i].Y < barriers.coordPair[j][3]) || (list[i].Y < barriers.coordPair[j][1] && list[i].Y >= barriers.coordPair[j][3]))
                             {
                                 distance_peop = Math.Abs((list[i].X + r / scale) - barriers.coordPair[j][0]);
-
-                                if (list[i].X + r/scale < barriers.coordPair[j][0])
+                                
+                                if ((list[i].X + r/scale) + eps <= barriers.coordPair[j][0])
                                 {
                                     pr_x = -1;
                                 }
@@ -580,7 +455,7 @@ namespace LearnOpenTK_2
                             // расстояние от точки до прямой: d = Math.Abs(A * Mx + B * My + C) / Math.Sqrt(A^2+B^2);
                             // где уравнение прямой: Ax+By+C=0, Mx и My - координаты центра человека
                             // в данном случае A = 0, y = -C/B
-                            if ((list[i].X + r/scale >= barriers.coordPair[j][0] && list[i].X + r / scale < barriers.coordPair[j][2]) || (list[i].X + r / scale < barriers.coordPair[j][0] && list[i].X + r / scale >= barriers.coordPair[j][2]))
+                            if ((list[i].X + r / scale >= barriers.coordPair[j][0] && list[i].X + r / scale < barriers.coordPair[j][2]) || (list[i].X + r / scale < barriers.coordPair[j][0] && list[i].X + r / scale >= barriers.coordPair[j][2]))
                             {
                                 distance_peop = Math.Abs(list[i].Y - barriers.coordPair[j][3]);
 
@@ -602,15 +477,42 @@ namespace LearnOpenTK_2
                         }
                         else//если наклонные прямые, пока что такое условие)
                         {
-                            pr_x = 0;
-                            pr_y = 0;
+                            // уравнение прямой будет (barriers.coordPair[j][3]-barriers.coordPair[j][1])(x - barriers.coordPair[j][0]) - (barriers.coordPair[j][2]-barriers.coordPair[j][0])(y - barriers.coordPair[j][1]) = 0
+                            // расстояние от точки до прямой: d = Math.Abs(A * Mx + B * My + C) / Math.Sqrt(A^2+B^2);
+                            // где уравнение прямой: Ax+By+C=0, Mx и My - координаты центра человека
+                            // в данном случае A = (barriers.coordPair[j][3]-barriers.coordPair[j][1]), y = -C/B
+
+                            if (((list[i].X + r / scale + r / scale >= barriers.coordPair[j][0] && list[i].X + r / scale < barriers.coordPair[j][2])) && ((list[i].Y >= barriers.coordPair[j][1] && list[i].Y - r / scale <= barriers.coordPair[j][3])))
+                            {
+                                //double c = (barriers.coordPair[j][1] - barriers.coordPair[j][3]) * barriers.coordPair[j][0] + (barriers.coordPair[j][2] - barriers.coordPair[j][0]) * barriers.coordPair[j][1];
+                                //double aa = (barriers.coordPair[j][3] - barriers.coordPair[j][1]) * (barriers.coordPair[j][3] - barriers.coordPair[j][1]);
+                                //double bb = (barriers.coordPair[j][2] - barriers.coordPair[j][0]) * (barriers.coordPair[j][2] - barriers.coordPair[j][0]);
+                                //distance_peop = Math.Abs(((barriers.coordPair[j][3] - barriers.coordPair[j][1]) * list[i].X + (barriers.coordPair[j][2] - barriers.coordPair[j][0]) * list[i].Y + c)/Math.Sqrt(aa + bb));
+
+
+                                //pr_x = -(lineInter.Intersection(barriers.coordPair[j][0], barriers.coordPair[j][1], barriers.coordPair[j][2], barriers.coordPair[j][3],list[i].X,list[i].Y, r/scale, 0)) / (distance_peop);
+                                //pr_y = (lineInter.Intersection(barriers.coordPair[j][0], barriers.coordPair[j][1], barriers.coordPair[j][2], barriers.coordPair[j][3], list[i].X, list[i].Y, r / scale, 1)) / (distance_peop);
+                                pr_x = 0;
+                                pr_y = 0;
+                            }
+                            else
+                            {
+                                pr_x = 0;
+                                pr_y = 0;
+                            }
+
                         }
 
                         s = 1.9 * (r / scale) / distance_peop;
 
-                        if (list[i].X >= 5 * 2 * r / scale)
+                        if (list[i].X >= 6 * 2 * r / scale)
                         {
                             s = 1.5 * (r / scale) / distance_peop;
+
+                        }
+                        else if (list[i].X >= 3 * 2 * r / scale && list[i].X < 6 * 2 * r / scale)
+                        {
+                            s = 2 * (r / scale) / distance_peop;
 
                         }
 
@@ -623,6 +525,7 @@ namespace LearnOpenTK_2
 
                         if (potential_Lennard >= 0)
                         {
+                            
                             if (force_Lennard > 250)
                             {
                                 force_Lennard = 250;
@@ -668,8 +571,8 @@ namespace LearnOpenTK_2
 
                     if (saveData.Velocity == 0)
                     {
-                        Console.WriteLine(Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vy));
-                        saveData.Velocity = Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vy);
+                        saveData.Velocity = Math.Round((Math.Sqrt(list[i].Vx * list[i].Vx + list[i].Vy * list[i].Vy)),3);
+                        Console.WriteLine(saveData.Velocity);
                         saveData.countPeoppleOutput = list_count;
                     }
                 }
@@ -729,14 +632,18 @@ namespace LearnOpenTK_2
                 //время первого зашедшегго на эскалатор
                 if (countPeopleExit == 1 && saveData.timeFirstOut == 0)
                 {
-                    saveData.timeFirstOut = time;
-                    saveData.timePreviousTrain = timePreviousTrain;
+                    saveData.timeFirstOut = Math.Round(time,3);
+                    if (countTrain == 0)
+                    {
+                        saveData.timePreviousTrain = 0;
+                    }
+                    else { saveData.timePreviousTrain = timePreviousTrain; }
                 }
 
                 //время всех зашедших на эскалатор
                 if (countPeopleExit == list_count && saveData.timeOut == 0)
                 {
-                    saveData.timeOut = time;
+                    saveData.timeOut = Math.Round(time, 3);
                 }
                 
                 //когда вышли все люди из "counter" поезда, записываю в файл результаты
@@ -749,7 +656,7 @@ namespace LearnOpenTK_2
                     averageSquareForce /= list_count;
                     averageForce /= list_count;
 
-                    saveData.forceDispersion[counter] = averageSquareForce - averageForce;
+                    saveData.forceDispersion[counter] = averageSquareForce - Math.Pow(averageForce,2);
                     ////////
 
                     if (countEsc == 0)
@@ -780,6 +687,8 @@ namespace LearnOpenTK_2
 
                 list[i].X += (list[i].Vx * dt);
                 list[i].Y += (list[i].Vy * dt);
+                //list[i].X += 0;
+                //list[i].Y += 0;
 
             }
 

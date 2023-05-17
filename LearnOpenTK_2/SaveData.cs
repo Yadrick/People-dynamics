@@ -74,7 +74,7 @@ namespace Dynamics_peoples
                         textСountPeopleLeft += "|";
                     }
 
-                    writer.WriteLine($"{countPeoppleOutput};{Velocity};{countTrain};{countVagon};{countEscalator};{timePreviousTrain};{textСountPeopleLeft};{timeFirstOut};{timeOut};{timeOut-timeFirstOut};{textForceDispersion};{countSufferer}");
+                    writer.WriteLine($"{countPeoppleOutput};{Velocity};{countTrain};{countVagon};{countEscalator};{timePreviousTrain};{textСountPeopleLeft};{timeFirstOut};{timeOut};{Math.Round(timeOut-timeFirstOut,3)};{textForceDispersion};{countSufferer}");
                     Console.WriteLine("записал");
                 }
 
